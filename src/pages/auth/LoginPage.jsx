@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, Link } from "react-router-dom";
+import { FiEye, FiEyeOff } from "react-icons/fi";
 
 import { loginSchema } from "../../features/auth/authSchema";
 import { loginUser } from "../../features/auth/authSlice";
@@ -13,9 +15,15 @@ const LoginPage = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
+    const [showPassword, setShowPassword] = useState(false);
+
     const { isLoading, error } = useSelector((state) => state.auth);
 
-    const { register, handleSubmit, formState: { errors }, } = useForm({
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
         resolver: zodResolver(loginSchema),
     });
 
@@ -31,7 +39,6 @@ const LoginPage = () => {
         <section className="bg-gray-50 dark:bg-gray-900 min-h-screen">
             <div className="flex min-h-screen flex-col items-center justify-center px-6 py-8 mx-auto">
                 <div className="w-full bg-white rounded-lg shadow dark:border sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-
                     <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
 
                         <div>
@@ -57,14 +64,31 @@ const LoginPage = () => {
                                 {...register("email")}
                             />
 
-                            <InputField
-                                label="Password"
-                                type="password"
-                                placeholder="Enter your password"
-                                autoComplete="current-password"
-                                error={errors.password}
-                                {...register("password")}
-                            />
+                            {/* Password Field */}
+                            <div className="relative">
+                                <InputField
+                                    label="Password"
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Enter your password"
+                                    autoComplete="current-password"
+                                    error={errors.password}
+                                    {...register("password")}
+                                />
+
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        setShowPassword(!showPassword)
+                                    }
+                                    className="absolute right-3 top-[42px] text-gray-500"
+                                >
+                                    {showPassword ? (
+                                        <FiEyeOff size={20} />
+                                    ) : (
+                                        <FiEye size={20} />
+                                    )}
+                                </button>
+                            </div>
 
                             <div className="flex justify-end">
                                 <Link
