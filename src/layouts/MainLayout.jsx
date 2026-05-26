@@ -3,7 +3,12 @@ import { Outlet } from "react-router-dom";
 const MainLayout = () => {
     return (
         <div>
-            <Outlet />
+            {/* header */}
+            <main className="min-h-screen">
+                <Outlet />
+            </main>
+
+            {/* footer */}
         </div>
     );
 };

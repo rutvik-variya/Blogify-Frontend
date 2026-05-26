@@ -27,7 +27,7 @@ const AppRoutes = () => {
                     <Route path="/profile" element={<ProfilePage />} />
                 </Route>
 
-                
+
                 {/* Admin routes */}
                 <Route element={<AdminRoute />}>
                     <Route path="/admin/dashboard" element={<Admindashboard />}></Route>
