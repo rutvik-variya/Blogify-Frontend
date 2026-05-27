@@ -80,7 +80,7 @@ const LoginPage = () => {
                                     onClick={() =>
                                         setShowPassword(!showPassword)
                                     }
-                                    className="absolute right-3 top-[42px] text-gray-500"
+                                    className="absolute right-3 top-10.5 text-gray-500"
                                 >
                                     {showPassword ? (
                                         <FiEyeOff size={20} />

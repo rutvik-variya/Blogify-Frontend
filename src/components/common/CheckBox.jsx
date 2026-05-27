@@ -7,8 +7,10 @@ const CheckBox = () => {
                         id="terms"
                         aria-describedby="terms"
                         type="checkbox"
-                        className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
                         required
+                        className="w-4 h-4 border border-gray-300 rounded bg-gray-50  accent-violet-600
+                           focus:ring-3 focus:ring-violet-300 
+                         dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-violet-600 dark:ring-offset-gray-800"
                     />
                 </div>
 

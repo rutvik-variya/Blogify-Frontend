@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
 
 import HomePage from "../pages/public/HomePage";
+import BlogPage from "../pages/public/BlogPage";
 import LoginPage from "../pages/auth/LoginPage";
 import RegisterPage from "../pages/auth/RegisterPage";
 import ProfilePage from "../pages/user/ProfilePage";
@@ -15,18 +16,19 @@ const AppRoutes = () => {
     return (
         <Routes>
 
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+
             <Route element={<MainLayout />}>
 
                 {/* public routes */}
                 <Route path="/" element={<HomePage />} />
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/blog" element={<BlogPage />} />
 
                 {/* protected routes */}
                 <Route element={<ProtectedRoute />}>
                     <Route path="/profile" element={<ProfilePage />} />
                 </Route>
-
 
                 {/* Admin routes */}
                 <Route element={<AdminRoute />}>

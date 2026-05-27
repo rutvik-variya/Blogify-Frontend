@@ -1,78 +1,114 @@
 import { useState } from "react"
 import logo from "../assets/images/logo.png"
+import avtar from "../assets/images/user-avtar.png"
+
+import { useSelector, useDispatch } from "react-redux"
+import { logoutUser } from "../features/auth/authSlice"
+import { useNavigate, Link } from "react-router-dom"
+import Button from "./common/Button"
 
 const Navbar = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [open, setOpen] = useState(false)
+    const { isAuthenticated } = useSelector((state) => state.auth)
+
+    const signOut = async () => {
+        await dispatch(logoutUser());
+        navigate("/login")
+    }
+
     return (
-        <div>
-            <nav className="bg-neutral-primary fixed w-full z-20 top-0 inset-s-0 ">
-                <div className="max-w-7xl flex flex-wrap items-center justify-between mx-auto relative">
+        <div className="w-full">
+            <nav className="bg-[#f8f9fa] fixed w-full z-20 top-0 left-0 border-b border-slate-200">
+                <div className="max-w-7xl flex flex-wrap items-center justify-between mx-auto relative px-6 py-2">
                     <div>
                         <img
-                            className="size-24"
+                            className="h-16 w-auto object-contain"
                             src={logo}
                             alt="logo"
                         />
                     </div>
-                    <div className="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-                        <button
-                            onClick={() => setOpen(!open)}
-                            className="flex text-sm bg-neutral-primary rounded-full md:me-0 focus:ring-4 focus:ring-neutral-tertiary"
-                        >
-                            <img src="" alt="img" class="inline-block w-8 h-8 rounded-full ring-2 ring-white outline -outline-offset-1 outline-black/5" />
-                        </button>
 
-                        {/* Dropdown */}
+                    <div className="items-center justify-between hidden md:flex md:w-auto md:order-1">
+                        <ul className="flex space-x-8 text-base font-normal">
+                            <li>
+                                <Link
+                                    to="/"
+                                    className="text-base text-slate-900 hover:text-purple-700 font-bold "
+                                >
+                                    Home
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    to="/blog"
+                                    className="text-base text-slate-900 hover:text-purple-700 font-bold"
+                                >
+                                    Blog
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div className="flex items-center md:order-2 relative">
+                        {isAuthenticated ? (
+                            <button
+                                onClick={() => setOpen(!open)}
+                                className="flex rounded-full focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all"
+                            >
+                                <img src={avtar} alt="User avatar" className="w-10 h-10 rounded-full object-cover" />
+                            </button>
+                        ) : (
+                            <Button
+                                type="click"
+                                value="Login"
+                                onClick={() => navigate("/login")}
+                            />
+                        )}
+
                         {open && (
-                            <div className="z-50 bg-neutral-primary-medium border border-default-medium rounded-base shadow-lg w-44 absolute right-6 top-20">
-                                <div className="px-4 py-3 text-sm border-b border-default">
-                                    <span className="block text-heading font-medium">
+                            <div className="z-50 bg-[#f8f9fa] border border-slate-800 w-56 absolute right-0 top-14 shadow-xl text-left">
+                                {/* Header Section */}
+                                <div className="px-5 py-3 border-b border-slate-800">
+                                    <span className="block text-slate-800 font-bold text-[15px]">
                                         Joseph McFall
                                     </span>
-                                    <span className="block text-body truncate">
+                                    <span className="block text-slate-600 font-normal text-[14px] mt-0.5">
                                         name@flowbite.com
                                     </span>
                                 </div>
 
-                                <ul className="p-2 text-sm text-body font-medium">
-                                    <li><a href="#" className="block p-2">Dashboard</a></li>
-                                    <li><a href="#" className="block p-2">Settings</a></li>
-                                    <li><a href="#" className="block p-2">Earnings</a></li>
-                                    <li><a href="#" className="block p-2">Sign out</a></li>
+                                {/* Links Section */}
+                                <ul className="py-2 text-slate-700 font-normal text-base flex flex-col">
+                                    <li>
+                                        <a href="#" className="block px-5 py-2.5 hover:text-purple-700 transition-colors">
+                                            Dashboard
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" className="block px-5 py-2.5 hover:text-purple-700 transition-colors">
+                                            Create Blog
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#" className="block px-5 py-2.5 hover:text-purple-700 transition-colors">
+                                            Profile
+                                        </a>
+                                    </li>
+                                    <li className="border-t border-slate-200 mt-1 pt-1" onClick={signOut}>
+                                        <button className="block w-full text-left px-5 py-2.5 hover:text-purple-700 transition-colors">
+                                            Sign out
+                                        </button>
+                                    </li>
                                 </ul>
                             </div>
                         )}
-
-                        <button data-collapse-toggle="navbar-user" type="button" className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-body rounded-base md:hidden hover:bg-neutral-secondary-soft hover:text-heading focus:outline-none focus:ring-2 focus:ring-neutral-tertiary" aria-controls="navbar-user" aria-expanded="false">
-                            <span className="sr-only">Open main menu</span>
-                            <svg className="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" strokeLinecap="round" strokeWidth="2" d="M5 7h14M5 12h14M5 17h14" /></svg>
-                        </button>
-                    </div>
-                    <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-user">
-                        <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-default rounded-base bg-neutral-secondary-soft md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-neutral-primary">
-                            <li>
-                                <a href="#" className="block py-2 px-3  bg-brand rounded md:bg-transparent md:text-fg-brand md:p-0" aria-current="page">Home</a>
-                            </li>
-                            <li>
-                                <a href="#" className="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent">About</a>
-                            </li>
-                            <li>
-                                <a href="#" className="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent">Services</a>
-                            </li>
-                            <li>
-                                <a href="#" className="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent">Pricing</a>
-                            </li>
-                            <li>
-                                <a href="#" className="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent">Contact</a>
-                            </li>
-                        </ul>
                     </div>
                 </div>
             </nav>
-        </div >
+        </div>
     )
 }
 
 export default Navbar
-
-

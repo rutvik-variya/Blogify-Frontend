@@ -89,10 +89,11 @@ const authSlice = createSlice({
 
             // logout
             .addCase(logoutUser.fulfilled, (state) => {
-                state.user = null
-                state.accessToken = null
-                state.refreshToken = null
-                state.isAuthenticated = false
+                state.user = null;
+                state.accessToken = null;
+                state.isAuthenticated = false;
+                state.error = null;
+                state.isLoading = false;
             })
     }
 
