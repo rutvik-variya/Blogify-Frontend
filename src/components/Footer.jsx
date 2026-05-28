@@ -13,7 +13,7 @@ const Footer = () => {
                     {/* Brand Info */}
                     <div className="flex flex-col space-y-4">
                         <img className="h-16 w-auto object-contain self-start" src={logo} alt="Vexon Logo" />
-                        <p className="text-[14px] leading-relaxed max-w-xs font-normal text-slate-600">
+                        <p className="text-base leading-relaxed max-w-xs font-normal text-slate-600">
                             Your ultimate destination for compelling narratives, expert insights, and daily inspiration. Empowering voices and connecting readers worldwide.
                         </p>
                         {/* Social Icons */}
@@ -33,7 +33,7 @@ const Footer = () => {
                     {/* Explore Categories */}
                     <div>
                         <h4 className="text-slate-800 font-bold text-base mb-5">Explore Categories</h4>
-                        <ul className="space-y-3 text-[14px] font-normal">
+                        <ul className="space-y-3 text-base font-normal">
                             <li><a href="#" className="hover:text-purple-700 transition-colors">Digital Marketing</a></li>
                             <li><a href="#" className="hover:text-purple-700 transition-colors">Ai & Technology</a></li>
                             <li><a href="#" className="hover:text-purple-700 transition-colors">Content Strategy</a></li>
@@ -46,7 +46,7 @@ const Footer = () => {
                     {/* Quick Links */}
                     <div>
                         <h4 className="text-slate-800 font-bold text-[16px] mb-5">Quick Links</h4>
-                        <ul className="space-y-3 text-[14px] font-normal">
+                        <ul className="space-y-3 text-base font-normal">
                             <li>
                                 <Link
                                     to="/"
@@ -95,7 +95,7 @@ const Footer = () => {
                     {/* Contact Us */}
                     <div>
                         <h4 className="text-slate-800 font-bold text-[16px] mb-5">Contact Us</h4>
-                        <ul className="space-y-4 text-[14px] font-normal">
+                        <ul className="space-y-4 text-base font-normal">
                             <li className="flex items-center space-x-3">
                                 <svg className="w-5 h-5 text-slate-700 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.92V6.75" /></svg>
                                 <a href="mailto:support@vexon.com" className="hover:text-purple-700">support@blogify.com</a>
@@ -116,7 +116,7 @@ const Footer = () => {
                 <hr className="border-slate-200 my-6" />
 
                 {/* Bottom Bar Content */}
-                <div className="flex flex-col md:flex-row items-center justify-between text-[13px] text-slate-500 space-y-4 md:space-y-0 font-normal">
+                <div className="flex flex-col md:flex-row items-center justify-between text-[14px] text-slate-500 space-y-4 md:space-y-0 font-normal">
                     <div>
                         © 2025 Vexon, Inc. All Rights Reserved.
                     </div>

@@ -31,7 +31,7 @@ const Navbar = () => {
                     </div>
 
                     <div className="items-center justify-between hidden md:flex md:w-auto md:order-1">
-                        <ul className="flex space-x-8 text-base font-normal">
+                        <ul className="flex space-x-8 text-xl font-normal">
                             <li>
                                 <Link
                                     to="/"
