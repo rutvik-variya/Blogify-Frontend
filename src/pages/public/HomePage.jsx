@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux"
 import { getCateories } from "../../features/category/categorySlice"
+import { latestBlog } from "../../features/blog/blogSlice";
 
 import HeroSection from "../../components/home/HeroSection"
 import CategorySection from "../../components/home/CategorySection"
@@ -9,9 +10,13 @@ const HomePage = () => {
     const dispatch = useDispatch();
     const { categories, loading } = useSelector((state) => state.category);
 
+    const { blogs, loading: blogLoading, error } = useSelector((state) => state.blog)
+
     useEffect(() => {
         dispatch(getCateories())
+        dispatch(latestBlog())
     }, [dispatch])
+
 
     return (
         <div>
@@ -22,8 +27,11 @@ const HomePage = () => {
                 loading={loading}
             />
 
-            {/* latest blog */}
-            <LatestBlogSection />
+            <LatestBlogSection
+                blogs={blogs.blog || []}
+                loading={blogLoading}
+                error={error}
+            />
         </div>
     )
 }
