@@ -12,6 +12,19 @@ export const latestBlog = createAsyncThunk("blog/latestBlog", async (_, thunkAPI
     }
 })
 
+
+export const fetchBlogs = createAsyncThunk("blog/fetchBlogs", async (params = {}, thunkAPI) => {
+    try {
+        const query = new URLSearchParams(params).toString();
+
+        const response = await axiosInstance.get(`/blog?${query}`);
+        return response.data;
+    }
+    catch (error) {
+        return thunkAPI.rejectWithValue(error.response.data.message)
+    }
+})
+
 const initialState = {
     blogs: [],
     loading: false,
@@ -44,6 +57,22 @@ const blogSlice = createSlice({
                 state.loading = false,
                     state.error = action.payload
             })
+
+            // fetch blogs 
+            .addCase(fetchBlogs.pending, (state) => {
+                state.loading = true;
+            })
+
+            .addCase(fetchBlogs.fulfilled, (state, action) => {
+                state.loading = false;
+                state.blogs = action.payload
+            })
+
+            .addCase(fetchBlogs.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+
     }
 })
 

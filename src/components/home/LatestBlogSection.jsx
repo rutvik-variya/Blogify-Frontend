@@ -1,24 +1,11 @@
 import { Link } from "react-router-dom";
-const LatestBlogSection = ({ blogs, loading, error }) => {
 
+const LatestBlogSection = ({ blogs, loading, error }) => {
     if (loading) {
         return (
-            <section className="max-w-7xl mx-auto px-4 py-12">
-                <h3 className="text-3xl font-bold text-gray-900 mb-8">Latest Blogs</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {[1, 2, 3].map((n) => (
-                        <div key={n} className="animate-pulse border border-gray-200 rounded-2xl overflow-hidden bg-white shadow-sm">
-                            <div className="bg-gray-200 h-52 w-full"></div>
-                            <div className="p-6 space-y-4">
-                                <div className="h-4 bg-gray-200 rounded w-1/4"></div>
-                                <div className="h-6 bg-gray-200 rounded w-3/4"></div>
-                                <div className="h-4 bg-gray-200 rounded w-full"></div>
-                                <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </section>
+            <div className="flex justify-center items-center min-h-[60vh]">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-600"></div>
+            </div>
         );
     }
     if (error) {
@@ -60,7 +47,6 @@ const LatestBlogSection = ({ blogs, loading, error }) => {
                             key={index}
                             className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition duration-300"
                         >
-                            {/* Image */}
                             <div className="relative">
                                 <img
                                     src={blog.featuredImage.url}
@@ -68,19 +54,16 @@ const LatestBlogSection = ({ blogs, loading, error }) => {
                                     className="w-full h-56 object-cover"
                                 />
 
-                                {/* Category Badge */}
-                                <span className="absolute bottom-4 left-4 bg-red-500 text-white text-sm px-4 py-1 rounded-full font-medium">
+                                <span className="absolute bottom-4 left-4 bg-violet-500 text-white text-sm px-4 py-1 rounded-full font-medium">
                                     {blog.category.name}
                                 </span>
                             </div>
 
-                            {/* Content */}
                             <div className="p-5">
                                 <h3 className="text-xl font-semibold text-gray-900 line-clamp-2">
                                     {blog.title}
                                 </h3>
 
-                                {/* Footer */}
                                 <div className="flex items-center justify-between mt-5">
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-sm font-bold uppercase">

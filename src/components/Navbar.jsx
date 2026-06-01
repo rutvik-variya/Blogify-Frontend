@@ -11,7 +11,7 @@ const Navbar = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [open, setOpen] = useState(false)
-    const { isAuthenticated } = useSelector((state) => state.auth)
+    const { isAuthenticated, user } = useSelector((state) => state.auth)
 
     const signOut = async () => {
         await dispatch(logoutUser());
@@ -24,7 +24,7 @@ const Navbar = () => {
                 <div className="max-w-7xl flex flex-wrap items-center justify-between mx-auto relative px-6 py-2">
                     <div>
                         <img
-                            className="h-16 w-auto object-contain"
+                            className="h-18 w-auto object-contain"
                             src={logo}
                             alt="logo"
                         />
@@ -72,10 +72,10 @@ const Navbar = () => {
                                 {/* Header Section */}
                                 <div className="px-5 py-3 border-b border-slate-800">
                                     <span className="block text-slate-800 font-bold text-[15px]">
-                                        Joseph McFall
+                                        {user?.name}
                                     </span>
                                     <span className="block text-slate-600 font-normal text-[14px] mt-0.5">
-                                        name@flowbite.com
+                                        {user?.email}
                                     </span>
                                 </div>
 
@@ -83,12 +83,12 @@ const Navbar = () => {
                                 <ul className="py-2 text-slate-700 font-normal text-base flex flex-col">
                                     <li>
                                         <a href="#" className="block px-5 py-2.5 hover:text-purple-700 transition-colors">
-                                            Dashboard
+                                            Create Blog
                                         </a>
                                     </li>
                                     <li>
                                         <a href="#" className="block px-5 py-2.5 hover:text-purple-700 transition-colors">
-                                            Create Blog
+                                            Dashboard
                                         </a>
                                     </li>
                                     <li>

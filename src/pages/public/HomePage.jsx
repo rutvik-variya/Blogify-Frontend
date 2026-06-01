@@ -6,11 +6,13 @@ import { latestBlog } from "../../features/blog/blogSlice";
 import HeroSection from "../../components/home/HeroSection"
 import CategorySection from "../../components/home/CategorySection"
 import LatestBlogSection from "../../components/home/LatestBlogSection";
+
 const HomePage = () => {
     const dispatch = useDispatch();
     const { categories, loading } = useSelector((state) => state.category);
 
     const { blogs, loading: blogLoading, error } = useSelector((state) => state.blog)
+
 
     useEffect(() => {
         dispatch(getCateories())

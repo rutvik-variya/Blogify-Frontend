@@ -12,7 +12,7 @@ const Footer = () => {
 
                     {/* Brand Info */}
                     <div className="flex flex-col space-y-4">
-                        <img className="h-16 w-auto object-contain self-start" src={logo} alt="Vexon Logo" />
+                        <img className="h-18 w-auto object-contain self-start" src={logo} alt="Vexon Logo" />
                         <p className="text-base leading-relaxed max-w-xs font-normal text-slate-600">
                             Your ultimate destination for compelling narratives, expert insights, and daily inspiration. Empowering voices and connecting readers worldwide.
                         </p>
