@@ -25,6 +25,20 @@ export const fetchBlogs = createAsyncThunk("blog/fetchBlogs", async (params = {}
     }
 })
 
+export const toggleLikeBlog = createAsyncThunk("blog/toggleLikeBlog", async (blogId, thunkAPI) => {
+    try {
+        const response = await axiosInstance.patch(`blog/${blogId}/like`);
+        return {
+            blogId,
+            liked: response.data.blog.liked,
+            totalLikes: response.data.blog.totalLikes,
+        };
+    }
+    catch (error) {
+        return thunkAPI.rejectWithValue(error.response.data.message)
+    }
+})
+
 const initialState = {
     blogs: [],
     loading: false,
@@ -71,6 +85,32 @@ const blogSlice = createSlice({
             .addCase(fetchBlogs.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
+            })
+
+            // toggle like
+            .addCase(toggleLikeBlog.fulfilled, (state, action) => {
+                const { blogId, liked, totalLikes } = action.payload;
+
+                const blogsArray = Array.isArray(state.blogs)
+                    ? state.blogs
+                    : state.blogs.blogs;
+
+                const blog = blogsArray.find(
+                    (item) => item._id === blogId
+                );
+
+                if (blog) {
+                    blog.isLiked = liked;
+                    blog.totalLikes = totalLikes;
+
+                    if (liked) {
+                        blog.likes.push(state.auth?.user?._id);
+                    } else {
+                        blog.likes = blog.likes.filter(
+                            id => id !== state.auth?.user?._id
+                        );
+                    }
+                }
             })
 
     }

@@ -30,7 +30,8 @@ const CategorySection = ({ categories }) => {
                             categoryList.map((item) => (
                                 <Link
                                     key={item._id || item.id}
-                                    to={`/category/${item.slug || item.name.toLowerCase()}`}
+                                    to="/blog"
+                                    state={{ categoryId: item._id }}
                                     className="group relative flex flex-col justify-between p-6 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700/50 shadow-xs hover:shadow-md hover:border-violet-500/30 dark:hover:border-violet-500/30 transition-all duration-300 transform hover:-translate-y-1"
                                 >
                                     <div>

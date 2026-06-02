@@ -1,10 +1,6 @@
 import logo from "../assets/images/logo.png"
 import { Link } from "react-router-dom"
 const Footer = () => {
-    const scrollToTop = () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
     return (
         <footer className="bg-[#f8f9fa] text-slate-600 py-12 border-t border-slate-200 relative font-normal">
             <div className="max-w-7xl mx-auto px-6">
@@ -127,17 +123,6 @@ const Footer = () => {
                     </div>
                 </div>
             </div>
-
-            {/* Back to Top Arrow */}
-            <button
-                onClick={scrollToTop}
-                className="absolute right-6 bottom-6 md:right-12 md:bottom-8 w-11 h-11 rounded-full border border-slate-800 flex items-center justify-center text-slate-800 hover:bg-slate-200 transition-all shadow-sm"
-                aria-label="Scroll to top"
-            >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
-                </svg>
-            </button>
         </footer>
     );
 };
