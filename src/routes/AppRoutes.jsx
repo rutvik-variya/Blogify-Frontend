@@ -4,6 +4,7 @@ import MainLayout from "../layouts/MainLayout";
 
 import HomePage from "../pages/public/HomePage";
 import BlogPage from "../pages/public/BlogPage";
+import BlogDetail from "../pages/public/BlogDetail";
 import LoginPage from "../pages/auth/LoginPage";
 import RegisterPage from "../pages/auth/RegisterPage";
 import ProfilePage from "../pages/user/ProfilePage";
@@ -24,6 +25,8 @@ const AppRoutes = () => {
                 {/* public routes */}
                 <Route path="/" element={<HomePage />} />
                 <Route path="/blog" element={<BlogPage />} />
+                <Route path="/blog/:slug" element={<BlogDetail />} />
+
 
                 {/* protected routes */}
                 <Route element={<ProtectedRoute />}>

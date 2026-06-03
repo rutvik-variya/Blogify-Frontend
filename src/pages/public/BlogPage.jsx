@@ -28,7 +28,6 @@ const BlogPage = () => {
 
     const [debounceSearch] = useDebounce(search, 500);
 
-
     useEffect(() => {
         dispatch(
             fetchBlogs({
