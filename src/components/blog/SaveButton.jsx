@@ -1,42 +1,40 @@
 import { useDispatch } from "react-redux";
-import { AiOutlineLike } from "react-icons/ai";
-import { AiFillLike } from "react-icons/ai";
-import { toggleLikeBlog } from "../../features/blog/blogSlice";
+import { toggleBookBlog } from "../../features/blog/blogSlice";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
+import { BsFillSave2Fill } from "react-icons/bs";
+import { BsSave } from "react-icons/bs";
 
-const LikeButton = ({ blog }) => {
-
+const SaveButton = ({ blog }) => {
     const { isAuthenticated, user } = useSelector((state) => state.auth);
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const handleLike = () => {
-        isAuthenticated ? dispatch(toggleLikeBlog(blog._id)) : navigate("/login")
+    const handleBookmark = () => {
+        isAuthenticated ? dispatch(toggleBookBlog(blog._id)) : navigate("/login")
     }
 
-
-    const isLiked = blog.likes?.some(
+    const isBookMark = blog.bookmarks?.some(
         (id) => String(id) === String(user?.id)
     );
 
     return (
         <button
-            onClick={handleLike}
+            onClick={handleBookmark}
             className="flex items-center space-x-2 hover:text-violet-600 transition-colors"
         >
-            {isLiked ? (
-                <AiFillLike className="text-[20px]" />
+            {isBookMark ? (
+                <BsFillSave2Fill className="text-[20px]" />
             ) : (
-                <AiOutlineLike className="text-[20px]" />
+                <BsSave className="text-[20px]" />
             )}
 
             <span className="text-xs font-semibold text-slate-500">
-                {blog.totalLikes || 0}
+                {blog.totalBookmarks || 0}
             </span>
         </button>
     )
 }
 
-export default LikeButton
+export default SaveButton

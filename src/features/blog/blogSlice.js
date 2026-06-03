@@ -27,9 +27,12 @@ export const fetchBlogs = createAsyncThunk("blog/fetchBlogs", async (params = {}
 
 export const toggleLikeBlog = createAsyncThunk("blog/toggleLikeBlog", async (blogId, thunkAPI) => {
     try {
+        const userId = thunkAPI.getState().auth.user.id;
+
         const response = await axiosInstance.patch(`blog/${blogId}/like`);
         return {
             blogId,
+            userId,
             liked: response.data.blog.liked,
             totalLikes: response.data.blog.totalLikes,
         };
@@ -38,6 +41,26 @@ export const toggleLikeBlog = createAsyncThunk("blog/toggleLikeBlog", async (blo
         return thunkAPI.rejectWithValue(error.response.data.message)
     }
 })
+
+export const toggleBookBlog = createAsyncThunk("blog/toggleSaveBlog", async (blogId, thunkAPI) => {
+    try {
+        const userId = thunkAPI.getState().auth.user.id;
+        const response = await axiosInstance.patch(`blog/${blogId}/bookmark`);
+
+        return {
+            blogId,
+            userId,
+            bookmark: response.data.blog.bookmark,
+            totalBookmarks: response.data.blog.totalBookMark,
+        };
+
+    } catch (error) {
+        return thunkAPI.rejectWithValue(
+            error.response?.data?.message
+        );
+    }
+}
+);
 
 const initialState = {
     blogs: [],
@@ -89,30 +112,54 @@ const blogSlice = createSlice({
 
             // toggle like
             .addCase(toggleLikeBlog.fulfilled, (state, action) => {
-                const { blogId, liked, totalLikes } = action.payload;
+                const { blogId, userId, liked, totalLikes } = action.payload;
 
                 const blogsArray = Array.isArray(state.blogs)
                     ? state.blogs
                     : state.blogs.blogs;
 
                 const blog = blogsArray.find(
-                    (item) => item._id === blogId
+                    item => item._id === blogId
                 );
 
-                if (blog) {
-                    blog.isLiked = liked;
-                    blog.totalLikes = totalLikes;
-
-                    if (liked) {
-                        blog.likes.push(state.auth?.user?._id);
-                    } else {
-                        blog.likes = blog.likes.filter(
-                            id => id !== state.auth?.user?._id
-                        );
+                blog.totalLikes = totalLikes;
+                if (liked) {
+                    if (!blog.likes.includes(userId)) {
+                        blog.likes.push(userId);
                     }
+                } else {
+                    blog.likes = blog.likes.filter(
+                        id => String(id) !== String(userId)
+                    );
                 }
             })
 
+            // toggle save 
+            .addCase(toggleBookBlog.fulfilled, (state, action) => {
+                const { blogId, userId, bookmark, totalBookmarks, } = action.payload;
+
+                const blogsArray = Array.isArray(state.blogs)
+                    ? state.blogs
+                    : state.blogs.blogs;
+
+                const blog = blogsArray.find(
+                    item => item._id === blogId
+                );
+
+                if (!blog) return;
+
+                blog.totalBookmarks = totalBookmarks;
+
+                if (bookmark) {
+                    if (!blog.bookmarks.includes(userId)) {
+                        blog.bookmarks.push(userId);
+                    }
+                } else {
+                    blog.bookmarks = blog.bookmarks.filter(
+                        id => String(id) !== String(userId)
+                    );
+                }
+            })
     }
 })
 

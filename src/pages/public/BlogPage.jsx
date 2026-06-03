@@ -4,7 +4,6 @@ import { fetchBlogs } from "../../features/blog/blogSlice";
 
 
 import { FaRegEye } from "react-icons/fa6";
-import { BsSave } from "react-icons/bs";
 import SearchBox from "../../components/blog/SearchBox";
 import { useDebounce } from "use-debounce";
 import SortBlog from "../../components/blog/SortBlog";
@@ -12,7 +11,7 @@ import { getCateories } from "../../features/category/categorySlice";
 import CategoryFilter from "../../components/blog/CategoryFilter";
 
 import LikeButton from "../../components/blog/LikeButton";
-
+import SaveButton from "../../components/blog/SaveButton";
 import { useLocation } from "react-router-dom";
 
 const BlogPage = () => {
@@ -166,10 +165,9 @@ const BlogPage = () => {
                                     <LikeButton
                                         blog={blog}
                                     />
-
-                                    <button className="hover:text-indigo-600 text-slate-400 transition-colors p-1 rounded-lg hover:bg-slate-50">
-                                        <BsSave className="text-[18px]" />
-                                    </button>
+                                    <SaveButton
+                                        blog={blog}
+                                    />
                                 </div>
                             </div>
                         </div>
