@@ -29,10 +29,6 @@ const SaveButton = ({ blog }) => {
             ) : (
                 <BsSave className="text-[20px]" />
             )}
-
-            <span className="text-xs font-semibold text-slate-500">
-                {blog.totalBookmarks || 0}
-            </span>
         </button>
     )
 }

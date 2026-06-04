@@ -1,5 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axiosInstance from "../../api/axios";
+import {
+    toggleLikeBlog,
+    toggleBookBlog
+} from "./blogSlice";
 
 export const fetchBlogDetail = createAsyncThunk("blogDetail/fetchBlogDetail", async (slug, thunkAPI) => {
     try {
@@ -44,6 +48,51 @@ const blogDetailSlice = createSlice({
 
                 state.loading = false,
                     state.error = action.payload;
+            })
+
+            // togggle like
+
+            .addCase(toggleLikeBlog.fulfilled, (state, action) => {
+                if (!state.blog?.blogs) return;
+
+                const { userId, liked, totalLikes } = action.payload;
+
+                state.blog.blogs.totalLikes = totalLikes;
+
+                if (liked) {
+                    if (!state.blog.blogs.likes.includes(userId)) {
+                        state.blog.blogs.likes.push(userId);
+                    }
+                } else {
+                    state.blog.blogs.likes =
+                        state.blog.blogs.likes.filter(
+                            id => String(id) !== String(userId)
+                        );
+                }
+            })
+
+            // toggle save
+            .addCase(toggleBookBlog.fulfilled, (state, action) => {
+                if (!state.blog?.blogs) return;
+
+                const {
+                    userId,
+                    bookmark,
+                    totalBookmarks
+                } = action.payload;
+
+                state.blog.blogs.totalBookmarks = totalBookmarks;
+
+                if (bookmark) {
+                    if (!state.blog.blogs.bookmarks.includes(userId)) {
+                        state.blog.blogs.bookmarks.push(userId);
+                    }
+                } else {
+                    state.blog.blogs.bookmarks =
+                        state.blog.blogs.bookmarks.filter(
+                            id => String(id) !== String(userId)
+                        );
+                }
             })
     }
 })

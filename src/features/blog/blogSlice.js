@@ -121,6 +121,7 @@ const blogSlice = createSlice({
                 const blog = blogsArray.find(
                     item => item._id === blogId
                 );
+                if (!blog) return;
 
                 blog.totalLikes = totalLikes;
                 if (liked) {

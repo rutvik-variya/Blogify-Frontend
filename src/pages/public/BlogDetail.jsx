@@ -7,14 +7,19 @@ import { FaArrowLeft } from "react-icons/fa";
 import { FaRegEye } from "react-icons/fa6";
 import LikeButton from "../../components/blog/LikeButton";
 import SaveButton from "../../components/blog/SaveButton";
+import CommentSection from "../../components/comment/CommentSection";
+
 const BlogDetail = () => {
+
     const { slug } = useParams();
     const dispatch = useDispatch();
 
     const { blog, error, loading } = useSelector((state) => state.blogDetail);
 
+
     useEffect(() => {
         dispatch(fetchBlogDetail(slug));
+
     }, [dispatch, slug]);
 
     if (loading) {
@@ -39,9 +44,10 @@ const BlogDetail = () => {
         );
     }
 
+
     if (!blog?.blogs) return null;
 
-    const { title, content, featuredImage, category, createdAt, author, status, view } = blog.blogs;
+    const { _id, title, content, featuredImage, category, createdAt, author, status, views, totalComments } = blog.blogs;
 
     return (
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
@@ -93,15 +99,15 @@ const BlogDetail = () => {
                     <div className="flex items-center space-x-1 hover:text-slate-600 transition-colors cursor-pointer">
                         <FaRegEye className="text-[22px]" />
                         <span className="text-xs font-semibold text-slate-500">
-                            {view || 0}
+                            {views || 0}
                         </span>
                     </div>
 
                     <LikeButton
-                        blog={blog}
+                        blog={blog.blogs}
                     />
                     <SaveButton
-                        blog={blog}
+                        blog={blog.blogs}
                     />
                 </div>
 
@@ -109,9 +115,13 @@ const BlogDetail = () => {
             <div className="prose prose-indigo prose-lg max-w-none text-gray-700 leading-relaxed whitespace-pre-line">
                 {content}
             </div>
-            <div >
 
-            </div>
+            {/* comment section */}
+
+            <CommentSection
+                totalComments={totalComments}
+                blogId={_id}
+            />
 
         </div>
     );
