@@ -7,7 +7,9 @@ import BlogPage from "../pages/public/BlogPage";
 import BlogDetail from "../pages/public/BlogDetail";
 import LoginPage from "../pages/auth/LoginPage";
 import RegisterPage from "../pages/auth/RegisterPage";
+
 import ProfilePage from "../pages/user/ProfilePage";
+import CreateBlog from "../pages/user/CreateBlog";
 
 import Admindashboard from "../pages/admin/Admindashboard";
 
@@ -31,6 +33,7 @@ const AppRoutes = () => {
                 {/* protected routes */}
                 <Route element={<ProtectedRoute />}>
                     <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="/createBlog" element={<CreateBlog />} />
                 </Route>
 
                 {/* Admin routes */}
