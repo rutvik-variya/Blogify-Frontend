@@ -18,12 +18,15 @@ export const fetchBlogs = createAsyncThunk("blog/fetchBlogs", async (params = {}
         const query = new URLSearchParams(params).toString();
 
         const response = await axiosInstance.get(`/blog?${query}`);
-        return response.data;
+
+        return response.data.blogs;
+    } catch (error) {
+        return thunkAPI.rejectWithValue(
+            error.response?.data?.message
+        );
     }
-    catch (error) {
-        return thunkAPI.rejectWithValue(error.response.data.message)
-    }
-})
+}
+);
 
 export const toggleLikeBlog = createAsyncThunk("blog/toggleLikeBlog", async (blogId, thunkAPI) => {
     try {
@@ -64,6 +67,8 @@ export const toggleBookBlog = createAsyncThunk("blog/toggleSaveBlog", async (blo
 
 const initialState = {
     blogs: [],
+    currentPage: 1,
+    hasMore: true,
     loading: false,
     error: false
 }
@@ -76,6 +81,11 @@ const blogSlice = createSlice({
         clearError: (state) => {
             state.error = null;
         },
+        resetBlogs: (state) => {
+            state.blogs = [];
+            state.currentPage = 1;
+            state.hasMore = true;
+        }
     },
     extraReducers: (builder) => {
         builder
@@ -102,7 +112,16 @@ const blogSlice = createSlice({
 
             .addCase(fetchBlogs.fulfilled, (state, action) => {
                 state.loading = false;
-                state.blogs = action.payload
+                const { blogs, currentPage, hasMore } = action.payload
+
+                if (currentPage === 1) {
+                    state.blogs = blogs
+                } else {
+                    state.blogs = [...state.blogs, ...blogs]
+                }
+
+                state.currentPage = currentPage;
+                state.hasMore = hasMore
             })
 
             .addCase(fetchBlogs.rejected, (state, action) => {
@@ -164,5 +183,5 @@ const blogSlice = createSlice({
     }
 })
 
-export const { clearError } = blogSlice.actions;
+export const { clearError, resetBlogs } = blogSlice.actions;
 export default blogSlice.reducer;
