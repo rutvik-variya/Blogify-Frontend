@@ -41,7 +41,6 @@ const AppRoutes = () => {
                     <Route path="/admin/dashboard" element={<Admindashboard />}></Route>
                 </Route>
             </Route>
-
         </Routes>
     );
 };

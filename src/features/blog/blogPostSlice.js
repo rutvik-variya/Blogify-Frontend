@@ -9,7 +9,6 @@ export const createBlog = createAsyncThunk("blog/createBlog", async (formData, t
             },
         }
         );
-
         return response.data.blog;
     } catch (error) {
         return thunkAPI.rejectWithValue(
