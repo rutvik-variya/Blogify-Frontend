@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import logo from "../assets/images/logo.png";
-import avtar from "../assets/images/user-avtar.png";
+
 
 import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../features/auth/authSlice";
@@ -91,9 +91,9 @@ const Navbar = () => {
                                 className="flex rounded-full focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all"
                             >
                                 <img
-                                    src={avtar}
+                                    src={user?.avtar?.url || "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80"}
                                     alt="User avatar"
-                                    className="w-10 h-10 rounded-full object-cover"
+                                    className="w-8 h-8 rounded-full object-cover"
                                 />
                             </button>
                         ) : (

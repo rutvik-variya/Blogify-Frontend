@@ -8,8 +8,10 @@ import BlogDetail from "../pages/public/BlogDetail";
 import LoginPage from "../pages/auth/LoginPage";
 import RegisterPage from "../pages/auth/RegisterPage";
 
-import ProfilePage from "../pages/user/ProfilePage";
 import CreateBlog from "../pages/user/CreateBlog";
+import ProfilePage from "../pages/user/ProfilePage";
+import ChangePassword from "../components/profile/ChangePassword";
+import UpdateProfile from "../components/profile/UpdateProfile";
 
 import Admindashboard from "../pages/admin/Admindashboard";
 
@@ -32,8 +34,10 @@ const AppRoutes = () => {
 
                 {/* protected routes */}
                 <Route element={<ProtectedRoute />}>
-                    <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/createBlog" element={<CreateBlog />} />
+                    <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="/updateProfile" element={<UpdateProfile />} />
+                    <Route path="/changePassword" element={<ChangePassword />} />
                 </Route>
 
                 {/* Admin routes */}
