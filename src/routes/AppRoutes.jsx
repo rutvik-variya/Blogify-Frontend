@@ -17,6 +17,14 @@ import Admindashboard from "../pages/admin/Admindashboard";
 
 import ProtectedRoute from "./ProtectedRoute";
 import AdminRoute from "./AdminRoute";
+
+import DashBoardLayout from "../layouts/DashBoardLayout";
+import DashboardHome from "../pages/dashboard/DashboardHome";
+import Activity from "../pages/dashboard/Activity";
+import Bookmarks from "../pages/dashboard/Bookmarks";
+import MyBlogs from "../pages/dashboard/MyBlogs"
+import RecentBlogs from "../pages/dashboard/RecentBlogs"
+
 const AppRoutes = () => {
     return (
         <Routes>
@@ -38,6 +46,32 @@ const AppRoutes = () => {
                     <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/updateProfile" element={<UpdateProfile />} />
                     <Route path="/changePassword" element={<ChangePassword />} />
+
+                    {/* user dashboard */}
+                    <Route path="/dashboard" element={<DashBoardLayout />}>
+                        <Route index element={<DashboardHome />} />
+
+                        <Route
+                            path="blogs"
+                            element={<MyBlogs />}
+                        />
+
+                        <Route
+                            path="recent"
+                            element={<RecentBlogs />}
+                        />
+
+                        <Route
+                            path="bookmarks"
+                            element={<Bookmarks />}
+                        />
+
+                        <Route
+                            path="activity"
+                            element={<Activity />}
+                        />
+
+                    </Route>
                 </Route>
 
                 {/* Admin routes */}

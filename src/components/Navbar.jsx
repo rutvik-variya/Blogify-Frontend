@@ -49,7 +49,6 @@ const Navbar = () => {
         <div className="w-full">
             <nav className="bg-[#f8f9fa] fixed w-full z-20 top-0 left-0 border-b border-slate-200">
                 <div className="max-w-7xl flex flex-wrap items-center justify-between mx-auto relative px-6 py-2">
-                    {/* Logo */}
                     <div>
                         <img
                             className="h-18 w-auto object-contain"
@@ -58,7 +57,6 @@ const Navbar = () => {
                         />
                     </div>
 
-                    {/* Desktop Navigation */}
                     <div className="items-center justify-between hidden md:flex md:w-auto md:order-1">
                         <ul className="flex space-x-8 text-xl font-normal">
                             <li>

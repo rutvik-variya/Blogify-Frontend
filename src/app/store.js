@@ -5,6 +5,7 @@ import blogReducer from "../features/blog/blogSlice"
 import blogDetailReducer from "../features/blog/blogDetailSlice";
 import commentReducer from "../features/comment/commentSlice"
 import createBlogReducer from "../features/blog/blogPostSlice"
+import dashboardReducer from "../features/dashboard/userDashboardSlice";
 
 import {
     persistStore,
@@ -38,7 +39,8 @@ export const store = configureStore({
         blog: blogReducer,
         blogDetail: blogDetailReducer,
         comment: commentReducer,
-        createBlog: createBlogReducer
+        createBlog: createBlogReducer,
+        dashboard: dashboardReducer,
     },
 
     middleware: (getDefaultMiddleware) =>
