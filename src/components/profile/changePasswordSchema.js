@@ -8,16 +8,5 @@ export const changePasswordSchema = z
 
         newPassword: z
             .string()
-            .min(8, "Password must be at least 6 characters"),
-
-        confirmPassword: z
-            .string()
-            .min(8, "Confirm password is required"),
-    })
-    .refine(
-        (data) => data.newPassword === data.confirmPassword,
-        {
-            path: ["confirmPassword"],
-            message: "Passwords do not match",
-        }
-    );
+            .min(8, "Password must be at least 8 characters"),
+    });

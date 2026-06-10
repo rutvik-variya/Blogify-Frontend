@@ -11,6 +11,7 @@ import { registerUser } from "../../features/auth/authSlice";
 import InputField from "../../components/common/InputField";
 import CheckBox from "../../components/common/CheckBox";
 import Button from "../../components/common/Button";
+import toast from "react-hot-toast";
 
 const RegisterPage = () => {
     const dispatch = useDispatch();
@@ -32,7 +33,12 @@ const RegisterPage = () => {
         const resultAction = await dispatch(registerUser(data));
 
         if (registerUser.fulfilled.match(resultAction)) {
+            toast.success("Account created successfully 🎉");
             navigate("/login");
+        } else {
+            toast.error(
+                resultAction.payload || "Registration failed"
+            );
         }
     };
 

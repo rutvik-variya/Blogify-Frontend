@@ -21,7 +21,7 @@ const FileUpload = forwardRef(({ label, error, onChange }, ref) => {
                         Click to upload featured cover image
                     </p>
                     <p className="text-xs text-slate-500 dark:text-slate-400">
-                        PNG, JPG or WEBP formats supported
+                        PNG, JPG formats supported
                     </p>
                 </div>
 

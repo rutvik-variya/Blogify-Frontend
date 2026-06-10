@@ -10,6 +10,7 @@ import { loginUser } from "../../features/auth/authSlice";
 
 import InputField from "../../components/common/InputField";
 import Button from "../../components/common/Button";
+import toast from "react-hot-toast";
 
 const LoginPage = () => {
     const dispatch = useDispatch();
@@ -31,7 +32,12 @@ const LoginPage = () => {
         const resultAction = await dispatch(loginUser(data));
 
         if (loginUser.fulfilled.match(resultAction)) {
+            toast.success("Welcome back 👋");
             navigate("/");
+        } else {
+            toast.error(
+                resultAction.payload || "Invalid email or password"
+            );
         }
     };
 
@@ -64,7 +70,6 @@ const LoginPage = () => {
                                 {...register("email")}
                             />
 
-                            {/* Password Field */}
                             <div className="relative">
                                 <InputField
                                     label="Password"

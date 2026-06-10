@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-
+import toast from "react-hot-toast";
 import InputField from "../common/InputField";
 import SelectField from "../common/SelectField";
 import TextAreaField from "../common/TextAreaField";
@@ -72,9 +72,15 @@ const BlogForm = () => {
         const result = await dispatch(createBlog(formData));
 
         if (createBlog.fulfilled.match(result)) {
+            toast.success("Blog created successfully");
+
             reset();
             setPreview(null);
             clearErrors("featuredImage");
+        } else {
+            toast.error(
+                result.payload || "Failed to create blog"
+            );
         }
     };
 
