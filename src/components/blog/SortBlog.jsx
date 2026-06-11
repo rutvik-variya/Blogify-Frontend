@@ -2,7 +2,7 @@
 
 const SortBlog = ({ sort, setSort }) => {
     return (
-        <div className="relative min-w-[120px]">
+        <div className="relative min-w-30">
             <select
                 value={sort}
                 onChange={(e) => setSort(e.target.value)}

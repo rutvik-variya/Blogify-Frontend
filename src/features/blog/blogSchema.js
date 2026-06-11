@@ -21,10 +21,14 @@ export const blogSchema = z.object({
         .refine((file) => file.size <= 5 * 1024 * 1024, {
             message: "Image must be less than 5MB",
         })
-        .refine((file) =>
-            ["image/jpeg", "image/png", "image/webp"].includes(file.type),
-            {
-                message: "Only JPG, PNG, WEBP allowed",
-            }
-        ),
+        .refine(
+            (file) =>
+                [
+                    "image/jpeg",
+                    "image/jpg",
+                    "image/png",
+                    "image/webp",
+                ].includes(file.type),
+            "Only JPG, PNG and WEBP files are allowed"
+        )
 });

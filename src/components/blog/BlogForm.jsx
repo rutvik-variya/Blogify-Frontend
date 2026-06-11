@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,6 +21,7 @@ const BlogForm = () => {
     const { categories } = useSelector((state) => state.category);
 
     const categoryList = categories?.categories || [];
+
     const [preview, setPreview] = useState(null);
 
     useEffect(() => {
@@ -29,11 +30,9 @@ const BlogForm = () => {
 
     const {
         register,
+        control,
         handleSubmit,
         reset,
-        setValue,
-        clearErrors,
-        trigger,
         formState: { errors },
     } = useForm({
         resolver: zodResolver(blogSchema),
@@ -44,43 +43,29 @@ const BlogForm = () => {
             content: "",
             featuredImage: null,
         },
+        mode: "onChange",
     });
-
-    const imageHandler = async (e) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        setPreview(URL.createObjectURL(file));
-        setValue("featuredImage", file, {
-            shouldValidate: true,
-            shouldDirty: true,
-        });
-
-        clearErrors("featuredImage");
-        const isValid = await trigger("featuredImage");
-
-        console.log("file valid:", isValid);
-    };
 
     const onSubmit = async (data) => {
         const formData = new FormData();
 
-        Object.entries(data).forEach(([key, value]) => {
-            formData.append(key, value);
-        });
+        formData.append("title", data.title);
+        formData.append("category", data.category);
+        formData.append("status", data.status);
+        formData.append("content", data.content);
+
+        if (data.featuredImage) {
+            formData.append("featuredImage", data.featuredImage);
+        }
 
         const result = await dispatch(createBlog(formData));
 
         if (createBlog.fulfilled.match(result)) {
             toast.success("Blog created successfully");
-
             reset();
             setPreview(null);
-            clearErrors("featuredImage");
         } else {
-            toast.error(
-                result.payload || "Failed to create blog"
-            );
+            toast.error(result.payload || "Failed to create blog");
         }
     };
 
@@ -98,17 +83,23 @@ const BlogForm = () => {
                 <SelectField
                     label="Category"
                     {...register("category")}
-                    error={errors?.category}
+                    error={errors.category}
                     options={categoryList}
                 />
 
                 <SelectField
                     label="Publication Status"
                     {...register("status")}
-                    error={errors?.status}
+                    error={errors.status}
                     options={[
-                        { _id: "draft", name: "Save as Draft" },
-                        { _id: "published", name: "Publish Immediately" },
+                        {
+                            _id: "draft",
+                            name: "Save as Draft",
+                        },
+                        {
+                            _id: "published",
+                            name: "Publish Immediately",
+                        },
                     ]}
                 />
             </div>
@@ -118,14 +109,31 @@ const BlogForm = () => {
                 row={12}
                 placeholder="Unleash your creativity here..."
                 {...register("content")}
-                error={errors?.content}
+                error={errors.content}
             />
 
             <div className="space-y-4">
-                <FileUpload
-                    label="Featured Cover Image"
-                    onChange={imageHandler}
-                    error={errors?.featuredImage}
+                <Controller
+                    name="featuredImage"
+                    control={control}
+                    render={({ field: { onChange } }) => (
+                        <FileUpload
+                            label="Featured Cover Image"
+                            error={errors.featuredImage}
+                            onChange={(e) => {
+                                const file = e.target.files?.[0];
+
+                                if (!file) {
+                                    onChange(null);
+                                    setPreview(null);
+                                    return;
+                                }
+
+                                onChange(file);
+                                setPreview(URL.createObjectURL(file));
+                            }}
+                        />
+                    )}
                 />
 
                 {preview && (
@@ -135,6 +143,7 @@ const BlogForm = () => {
                             alt="preview"
                             className="w-full h-52 object-cover rounded-lg"
                         />
+
                         <div className="absolute top-4 left-4 bg-slate-900/80 backdrop-blur-sm text-white text-xs font-semibold px-2.5 py-1 rounded-md">
                             Image Preview
                         </div>
@@ -151,7 +160,7 @@ const BlogForm = () => {
             </div>
 
             {error && (
-                <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50">
+                <div className="p-4 rounded-xl bg-violet-50 dark:bg-violet-950/30 border border-violet-200 dark:border-violet-900/50">
                     <p className="text-violet-600 dark:text-violet-400 text-sm font-medium">
                         {error}
                     </p>
