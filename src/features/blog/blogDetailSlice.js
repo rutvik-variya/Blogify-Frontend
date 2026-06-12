@@ -45,7 +45,6 @@ const blogDetailSlice = createSlice({
             })
 
             .addCase(fetchBlogDetail.rejected, (state, action) => {
-
                 state.loading = false,
                     state.error = action.payload;
             })
@@ -96,8 +95,6 @@ const blogDetailSlice = createSlice({
             })
     }
 })
-
-
 
 export const { clearError } = blogDetailSlice.actions;
 export default blogDetailSlice.reducer;

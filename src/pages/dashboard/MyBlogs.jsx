@@ -29,10 +29,6 @@ const MyBlogs = () => {
         }
     };
 
-    const handleEdit = (blogId) => {
-        console.log("Edit ID:", blogId);
-    };
-
     const counts = useMemo(() => {
         if (!myBlogs) return { all: 0, published: 0, draft: 0 };
         return {
@@ -135,7 +131,10 @@ const MyBlogs = () => {
                                                         e.target.src = "https://placehold.co/100x100?text=Blog";
                                                     }}
                                                 />
-                                                <h4 className="font-semibold text-slate-700 truncate">{blog.title}</h4>
+                                                <h4 className="font-semibold text-slate-700 truncate hover:text-violet-400">
+                                                    <a href={`/blog/${blog.slug}`}>{blog.title}</a>
+
+                                                </h4>
                                             </div>
                                         </td>
 
@@ -161,7 +160,12 @@ const MyBlogs = () => {
 
                                         <td className="py-3.5 px-6 text-right whitespace-nowrap">
                                             <div className="inline-flex items-center gap-1">
-                                                <button onClick={() => handleEdit(blog._id)} className="p-1 text-slate-400 hover:text-violet-600 rounded transition-colors" title="Edit"><FiEdit2 size={13} /></button>
+                                                <Link
+                                                    to={`/editBlog/${blog._id}`}
+                                                    className="p-1 text-slate-400 hover:text-violet-600 rounded transition-colors" title="Edit"
+                                                >
+                                                    <FiEdit2 size={13} />
+                                                </Link>
                                                 <button onClick={() => handleDelete(blog._id)} className="p-1 text-slate-400 hover:text-rose-500 rounded transition-colors" title="Delete"><FiTrash2 size={13} /></button>
                                             </div>
                                         </td>
@@ -177,6 +181,8 @@ const MyBlogs = () => {
                                     </td>
                                 </tr>
                             )}
+
+
                         </tbody>
                     </table>
                 </div>

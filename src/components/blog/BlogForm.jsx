@@ -11,23 +11,28 @@ import FileUpload from "../common/FileUpload";
 import Button from "../common/Button";
 
 import { blogSchema } from "../../features/blog/blogSchema";
-import { createBlog } from "../../features/blog/blogPostSlice";
+import { editBlogSchema } from "../../features/blog/editBlogSchema";
 import { getCateories } from "../../features/category/categorySlice";
 
-const BlogForm = () => {
+import { createBlog } from "../../features/blog/blogPostSlice";
+import { editBlog } from "../../features/dashboard/userDashboardSlice";
+import { useNavigate } from "react-router-dom";
+
+const BlogForm = ({ mode, blog = null }) => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const { loading, error } = useSelector((state) => state.createBlog);
     const { categories } = useSelector((state) => state.category);
 
     const categoryList = categories?.categories || [];
 
-    const [preview, setPreview] = useState(null);
-
     useEffect(() => {
         dispatch(getCateories());
     }, [dispatch]);
 
+
+    const schema = (mode === "create") ? blogSchema : editBlogSchema
     const {
         register,
         control,
@@ -35,16 +40,19 @@ const BlogForm = () => {
         reset,
         formState: { errors },
     } = useForm({
-        resolver: zodResolver(blogSchema),
+        resolver: zodResolver(schema),
         defaultValues: {
-            title: "",
-            category: "",
-            status: "draft",
-            content: "",
+            title: blog?.title || "",
+            category: blog?.category?._id || "",
+            status: blog?.status || "draft",
+            content: blog?.content || "",
             featuredImage: null,
         },
         mode: "onChange",
     });
+
+
+    const [preview, setPreview] = useState(blog?.featuredImage?.url || null);
 
     const onSubmit = async (data) => {
         const formData = new FormData();
@@ -58,12 +66,17 @@ const BlogForm = () => {
             formData.append("featuredImage", data.featuredImage);
         }
 
-        const result = await dispatch(createBlog(formData));
+        let result = (mode === "create") ? await dispatch(createBlog(formData)) : await dispatch(editBlog({ blogId: blog._id, formData }));
 
-        if (createBlog.fulfilled.match(result)) {
-            toast.success("Blog created successfully");
+        if (createBlog.fulfilled.match(result) || editBlog.fulfilled.match(result)) {
+            toast.success(
+                mode === "create"
+                    ? "Blog created successfully"
+                    : "Blog updated successfully"
+            );
             reset();
             setPreview(null);
+            navigate("/dashboard/blogs")
         } else {
             toast.error(result.payload || "Failed to create blog");
         }
@@ -155,7 +168,15 @@ const BlogForm = () => {
                 <Button
                     type="submit"
                     disabled={loading}
-                    value={loading ? "Creating..." : "Create Post"}
+                    value={
+                        loading
+                            ? mode === "create"
+                                ? "Creating..."
+                                : "Updating..."
+                            : mode === "create"
+                                ? "Create Post"
+                                : "Update Post"
+                    }
                 />
             </div>
 

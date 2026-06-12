@@ -24,6 +24,7 @@ import Activity from "../pages/dashboard/Activity";
 import Bookmarks from "../pages/dashboard/Bookmarks";
 import MyBlogs from "../pages/dashboard/MyBlogs"
 import RecentBlogs from "../pages/dashboard/RecentBlogs"
+import EditBlog from "../pages/user/EditBlog";
 
 const AppRoutes = () => {
     return (
@@ -43,6 +44,7 @@ const AppRoutes = () => {
                 {/* protected routes */}
                 <Route element={<ProtectedRoute />}>
                     <Route path="/createBlog" element={<CreateBlog />} />
+                    <Route path="/editBlog/:id" element={<EditBlog />} />
                     <Route path="/profile" element={<ProfilePage />} />
                     <Route path="/updateProfile" element={<UpdateProfile />} />
                     <Route path="/changePassword" element={<ChangePassword />} />

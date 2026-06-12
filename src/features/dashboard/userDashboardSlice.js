@@ -86,10 +86,7 @@ export const deleteBlog = createAsyncThunk(
 
     async (blogId, thunkAPI) => {
         try {
-            const res = await axiosInstance.delete(
-                `/blog/${blogId}`
-            );
-
+            const res = await axiosInstance.delete(`/blog/${blogId}`);
             return {
                 blogId,
                 message: res.data.message,
@@ -103,6 +100,28 @@ export const deleteBlog = createAsyncThunk(
     }
 );
 
+
+export const editBlog = createAsyncThunk(
+    "dashboard/editBlog",
+    async ({ blogId, formData }, thunkAPI) => {
+        try {
+            const res = await axiosInstance.put(`/blog/${blogId}`, formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            )
+            return res.data.blog;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(
+                error.response?.data?.message ||
+                "Failed to delete blog"
+            );
+        }
+
+    }
+)
 
 const initialState = {
     stats: null,
@@ -226,6 +245,24 @@ const dashboardSlice = createSlice({
 
             .addCase(deleteBlog.rejected, (state, action) => {
                 state.deleteLoading = false;
+                state.error = action.payload;
+            })
+
+            // edit blog
+            .addCase(editBlog.pending, (state) => {
+                state.loading = true;
+            })
+
+            .addCase(editBlog.fulfilled, (state, action) => {
+                state.loading = false;
+
+                state.myBlogs = state.myBlogs.map((blog) =>
+                    blog._id === action.payload._id ? action.payload : blog
+                );
+            })
+
+            .addCase(editBlog.rejected, (state, action) => {
+                state.loading = false;
                 state.error = action.payload;
             })
     },
