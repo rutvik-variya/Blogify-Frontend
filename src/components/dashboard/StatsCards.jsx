@@ -1,6 +1,6 @@
-import { FiBookOpen, FiCheckCircle, FiEdit2, FiHeart, FiMessageSquare, FiBookmark } from "react-icons/fi";
 
-const StatsCards = ({ stats, loading, error }) => {
+
+const StatsCards = ({ loading, error, cardsConfig }) => {
     if (error) {
         return (
             <div className="bg-violet-50 border border-violet-100 p-4 rounded-xl text-sm font-medium text-violet-600 text-center">
@@ -8,15 +8,6 @@ const StatsCards = ({ stats, loading, error }) => {
             </div>
         );
     }
-
-    const cardsConfig = [
-        { label: "Total Blogs", value: stats?.totalBlogs, icon: FiBookOpen, color: "text-blue-600 bg-blue-50" },
-        { label: "Published Blogs", value: stats?.publishedBlogs, icon: FiCheckCircle, color: "text-emerald-600 bg-emerald-50" },
-        { label: "Draft Blogs", value: stats?.draftBlogs, icon: FiEdit2, color: "text-amber-600 bg-amber-50" },
-        { label: "Total Likes", value: stats?.totallike, icon: FiHeart, color: "text-rose-600 bg-rose-50" },
-        { label: "Total Comments", value: stats?.totalComment, icon: FiMessageSquare, color: "text-indigo-600 bg-indigo-50" },
-        { label: "Total Bookmarks", value: stats?.totalBookmark, icon: FiBookmark, color: "text-purple-600 bg-purple-50" },
-    ];
 
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">

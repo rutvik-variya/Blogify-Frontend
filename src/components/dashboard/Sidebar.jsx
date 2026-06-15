@@ -1,7 +1,81 @@
 import { NavLink } from "react-router-dom";
-import { FiHome, FiFileText, FiClock, FiBookmark, FiActivity } from "react-icons/fi";
+import {
+    FiHome,
+    FiFileText,
+    FiClock,
+    FiBookmark,
+    FiActivity,
+    FiUsers,
+    FiGrid,
+    FiMessageSquare
+} from "react-icons/fi";
 
+import { useSelector } from "react-redux";
 const Sidebar = () => {
+
+    const { user } = useSelector((state) => state.auth);
+    const role = user?.role;
+
+
+    const userMenus = [
+        {
+            title: "Dashboard",
+            path: "/dashboard",
+            icon: FiHome
+        },
+        {
+            title: "My Blogs",
+            path: "/dashboard/blogs",
+            icon: FiFileText
+
+        },
+        {
+            title: "Recent Blogs",
+            path: "/dashboard/recent",
+            icon: FiClock
+        },
+        {
+            title: "Bookmarks",
+            path: "/dashboard/bookmarks",
+            icon: FiBookmark
+        },
+        {
+            title: "Activity",
+            path: "/dashboard/activity",
+            icon: FiActivity
+        },
+    ]
+
+    const adminMenus = [
+        {
+            title: "Dashboard",
+            path: "/dashboard",
+            icon: FiHome,
+        },
+        {
+            title: "Users",
+            path: "/dashboard/users",
+            icon: FiUsers,
+        },
+        {
+            title: "Categories",
+            path: "/dashboard/categories",
+            icon: FiGrid,
+        },
+        {
+            title: "Blogs",
+            path: "/dashboard/my-blogs",
+            icon: FiFileText,
+        },
+        {
+            title: "Comments",
+            path: "/dashboard/comments",
+            icon: FiMessageSquare,
+        },
+    ];
+
+    const menus = role === "admin" ? adminMenus : userMenus;
+
     const linkClasses = ({ isActive }) =>
         `flex items-center gap-3 px-5 py-3.5 text-sm font-medium transition-colors border-l-2 ${isActive
             ? "bg-violet-50/60 text-violet-600 border-violet-600"
@@ -18,30 +92,17 @@ const Sidebar = () => {
             </div>
 
             <nav className="flex flex-col pt-4">
-                <NavLink to="/dashboard" end className={linkClasses}>
-                    <FiHome size={18} className="opacity-80" />
-                    <span>Home</span>
-                </NavLink>
-
-                <NavLink to="/dashboard/blogs" className={linkClasses}>
-                    <FiFileText size={18} className="opacity-80" />
-                    <span>My Blogs</span>
-                </NavLink>
-
-                <NavLink to="/dashboard/recent" className={linkClasses}>
-                    <FiClock size={18} className="opacity-80" />
-                    <span>Recent Blogs</span>
-                </NavLink>
-
-                <NavLink to="/dashboard/bookmarks" className={linkClasses}>
-                    <FiBookmark size={18} className="opacity-80" />
-                    <span>Bookmarks</span>
-                </NavLink>
-
-                <NavLink to="/dashboard/activity" className={linkClasses}>
-                    <FiActivity size={18} className="opacity-80" />
-                    <span>Activity</span>
-                </NavLink>
+                {
+                    menus.map((menu, id) => {
+                        const Icon = menu.icon;
+                        return (
+                            <NavLink key={id} to={menu.path} end className={linkClasses}>
+                                <Icon size={18} className="opacity-80" />
+                                <span>{menu.title}</span>
+                            </NavLink>
+                        )
+                    })
+                }
             </nav>
         </div>
     );

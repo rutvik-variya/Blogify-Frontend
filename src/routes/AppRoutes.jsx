@@ -13,18 +13,22 @@ import ProfilePage from "../pages/user/ProfilePage";
 import ChangePassword from "../components/profile/ChangePassword";
 import UpdateProfile from "../components/profile/UpdateProfile";
 
-import Admindashboard from "../pages/admin/Admindashboard";
-
 import ProtectedRoute from "./ProtectedRoute";
 import AdminRoute from "./AdminRoute";
 
 import DashBoardLayout from "../layouts/DashBoardLayout";
-import DashboardHome from "../pages/dashboard/DashboardHome";
 import Activity from "../pages/dashboard/Activity";
 import Bookmarks from "../pages/dashboard/Bookmarks";
 import MyBlogs from "../pages/dashboard/MyBlogs"
 import RecentBlogs from "../pages/dashboard/RecentBlogs"
 import EditBlog from "../pages/user/EditBlog";
+
+
+import Dashboard from "../pages/dashboard/Dashboard";
+import Users from "../pages/admin/Users";
+import Categories from "../pages/admin/Categories";
+import Blogs from "../pages/admin/Blogs";
+import Comments from "../pages/admin/Comments";
 
 const AppRoutes = () => {
     return (
@@ -49,15 +53,14 @@ const AppRoutes = () => {
                     <Route path="/updateProfile" element={<UpdateProfile />} />
                     <Route path="/changePassword" element={<ChangePassword />} />
 
-                    {/* user dashboard */}
                     <Route path="/dashboard" element={<DashBoardLayout />}>
-                        <Route index element={<DashboardHome />} />
 
                         <Route
-                            path="blogs"
-                            element={<MyBlogs />}
+                            index
+                            element={<Dashboard />}
                         />
 
+                        {/* User Routes */}
                         <Route
                             path="recent"
                             element={<RecentBlogs />}
@@ -73,12 +76,37 @@ const AppRoutes = () => {
                             element={<Activity />}
                         />
 
-                    </Route>
-                </Route>
+                        <Route
+                            path="blogs"
+                            element={<MyBlogs />}
+                        />
 
-                {/* Admin routes */}
-                <Route element={<AdminRoute />}>
-                    <Route path="/admin/dashboard" element={<Admindashboard />}></Route>
+                        {/* Admin Routes */}
+                        <Route element={<AdminRoute />}>
+
+                            <Route
+                                path="users"
+                                element={<Users />}
+                            />
+
+                            <Route
+                                path="categories"
+                                element={<Categories />}
+                            />
+
+                            <Route
+                                path="my-blogs"
+                                element={<Blogs />}
+                            />
+
+                            <Route
+                                path="comments"
+                                element={<Comments />}
+                            />
+
+                        </Route>
+
+                    </Route>
                 </Route>
             </Route>
         </Routes>
