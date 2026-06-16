@@ -67,11 +67,11 @@ const LatestBlogSection = ({ blogs, loading, error }) => {
                                 <div className="flex items-center justify-between mt-5">
                                     <div className="flex items-center gap-3">
                                         <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-sm font-bold uppercase">
-                                            {blog.author.name.charAt(0)}
+                                            {blog?.author?.name.charAt(0)}
                                         </div>
                                         <div >
                                             <p className="text-sm font-medium text-gray-700">
-                                                by {blog.author.name}
+                                                by {blog?.author?.name}
                                             </p>
                                         </div>
                                         <div className="flex items-center gap-1 text-xs text-gray-500">

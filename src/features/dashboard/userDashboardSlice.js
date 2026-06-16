@@ -116,7 +116,7 @@ export const editBlog = createAsyncThunk(
         } catch (error) {
             return thunkAPI.rejectWithValue(
                 error.response?.data?.message ||
-                "Failed to delete blog"
+                "Failed to edit blog"
             );
         }
 

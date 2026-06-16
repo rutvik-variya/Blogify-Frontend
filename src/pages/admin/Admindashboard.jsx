@@ -30,7 +30,6 @@ const Admindashboard = () => {
 
     return (
         <div className="space-y-6 text-left font-sans">
-            {/* Typography matches User Overview exactly */}
             <div>
                 <h2 className="text-2xl font-bold text-slate-800 tracking-tight">Admin Overview</h2>
                 <p className="text-sm text-slate-400 mt-1">
@@ -38,7 +37,6 @@ const Admindashboard = () => {
                 </p>
             </div>
 
-            {/* Shared Reusable Grid Component */}
             <StatsCards
                 cardsConfig={cardsConfig}
                 loading={loading}

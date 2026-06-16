@@ -27,6 +27,9 @@ import EditBlog from "../pages/user/EditBlog";
 import Dashboard from "../pages/dashboard/Dashboard";
 import Users from "../pages/admin/Users";
 import Categories from "../pages/admin/Categories";
+import AddCategory from "../pages/admin/AddCategory";
+import EditCategory from "../pages/admin/EditCategory";
+
 import Blogs from "../pages/admin/Blogs";
 import Comments from "../pages/admin/Comments";
 
@@ -95,6 +98,14 @@ const AppRoutes = () => {
                             />
 
                             <Route
+                                path="addcategory"
+                                element={<AddCategory />}
+                            />
+                            <Route
+                                path="editCategory/:id"
+                                element={<EditCategory />}
+                            />
+                            <Route
                                 path="my-blogs"
                                 element={<Blogs />}
                             />
@@ -103,7 +114,6 @@ const AppRoutes = () => {
                                 path="comments"
                                 element={<Comments />}
                             />
-
                         </Route>
 
                     </Route>

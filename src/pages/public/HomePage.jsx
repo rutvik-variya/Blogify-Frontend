@@ -13,7 +13,6 @@ const HomePage = () => {
 
     const { blogs, loading: blogLoading, error } = useSelector((state) => state.blog)
 
-
     useEffect(() => {
         dispatch(getCateories())
         dispatch(latestBlog())
