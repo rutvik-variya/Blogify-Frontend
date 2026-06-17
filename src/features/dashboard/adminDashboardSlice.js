@@ -147,12 +147,69 @@ export const deleteBlog = createAsyncThunk(
     }
 );
 
+export const changeBlogStatus = createAsyncThunk(
+    "admin/changeBlogStatus",
+
+    async ({ blogId, status }, thunkAPI) => {
+        try {
+            const res = await axiosInstance.patch(`/admin/blog/${blogId}/status`, status);
+            return {
+                blogId,
+                status: res.data.blog.status,
+                message: res.data.message,
+            };
+
+        } catch (error) {
+            return thunkAPI.rejectWithValue(
+                error.response?.data?.message ||
+                "Failed to change blog status"
+            );
+        }
+    }
+);
+
+export const fetchComments = createAsyncThunk(
+    "admin/fetchComments",
+    async (_, thunkAPI) => {
+        try {
+            const response = await axiosInstance.get("/admin/comments");
+            return response.data.comments;
+
+        } catch (error) {
+            return thunkAPI.rejectWithValue(
+                error.response?.data?.message || "Failed to fetch comments"
+            );
+        }
+    }
+);
+
+
+export const deleteComment = createAsyncThunk(
+    "admin/deleteComment",
+
+    async (commentId, thunkAPI) => {
+        try {
+            const res = await axiosInstance.delete(`/admin/comments/${commentId}`);
+            return {
+                commentId,
+                message: res.data.message,
+            };
+        } catch (error) {
+            return thunkAPI.rejectWithValue(
+                error.response?.data?.message ||
+                "Failed to delete blog"
+            );
+        }
+    }
+);
+
 
 const initialState = {
     stats: null,
     users: [],
     categories: [],
     blogs: [],
+    comments: [],
 
     loading: false,
     userLoading: false,
@@ -160,7 +217,7 @@ const initialState = {
     categoryLoading: false,
     deleteLoading: false,
     blogsLoding: false,
-
+    commentLoding: false,
 
     error: null,
 };
@@ -304,6 +361,56 @@ const adminDashBoardSlice = createSlice({
                 );
             })
             .addCase(deleteBlog.rejected, (state, action) => {
+                state.deleteLoading = false;
+                state.error = action.payload;
+            })
+
+            // change blog status on toggle
+            .addCase(changeBlogStatus.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(changeBlogStatus.fulfilled, (state, action) => {
+                state.loading = false;
+                const blog = state.blogs.find(
+                    (blog) => blog._id === action.payload.blogId
+                );
+
+                if (blog) {
+                    blog.status = action.payload.status;
+                }
+            })
+            .addCase(changeBlogStatus.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+
+            // manage comments
+            .addCase(fetchComments.pending, (state) => {
+                state.commentLoding = true;
+                state.error = null;
+            })
+            .addCase(fetchComments.fulfilled, (state, action) => {
+                state.commentLoding = false;
+                state.comments = action.payload;
+            })
+            .addCase(fetchComments.rejected, (state, action) => {
+                state.commentLoding = false;
+                state.error = action.payload;
+            })
+
+            .addCase(deleteComment.pending, (state) => {
+                state.deleteLoading = true;
+            })
+
+            .addCase(deleteComment.fulfilled, (state, action) => {
+                state.deleteLoading = false;
+
+                state.comments = state.comments.filter(
+                    (comment) => comment._id !== action.payload.commentId
+                );
+            })
+
+            .addCase(deleteComment.rejected, (state, action) => {
                 state.deleteLoading = false;
                 state.error = action.payload;
             })

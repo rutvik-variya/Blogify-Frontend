@@ -64,6 +64,12 @@ const AppRoutes = () => {
                         />
 
                         {/* User Routes */}
+
+                        <Route
+                            path="blogs"
+                            element={<MyBlogs />}
+                        />
+
                         <Route
                             path="recent"
                             element={<RecentBlogs />}
@@ -79,14 +85,8 @@ const AppRoutes = () => {
                             element={<Activity />}
                         />
 
-                        <Route
-                            path="blogs"
-                            element={<MyBlogs />}
-                        />
-
                         {/* Admin Routes */}
                         <Route element={<AdminRoute />}>
-
                             <Route
                                 path="users"
                                 element={<Users />}

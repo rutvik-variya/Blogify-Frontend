@@ -125,12 +125,6 @@ const BlogPage = () => {
                         Loading more blogs...
                     </div>
                 }
-
-                endMessage={
-                    <p className="text-center py-6 text-violet-700">
-                        No more blogs
-                    </p>
-                }
             >
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {!loading && blogList.length === 0 && (

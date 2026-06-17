@@ -29,10 +29,10 @@ const Admindashboard = () => {
     ];
 
     return (
-        <div className="space-y-6 text-left font-sans">
-            <div>
-                <h2 className="text-2xl font-bold text-slate-800 tracking-tight">Admin Overview</h2>
-                <p className="text-sm text-slate-400 mt-1">
+        <div className="space-y-6 text-left font-sans w-full">
+            <div className="px-1 sm:px-0">
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight">Admin Overview</h2>
+                <p className="text-xs sm:text-sm text-slate-400 mt-1 leading-relaxed">
                     Global platform metrics, user distributions, and content engagement data.
                 </p>
             </div>

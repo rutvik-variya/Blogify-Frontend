@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { getDashboardStats } from "../../features/dashboard/userDashboardSlice";
 import StatsCards from "../../components/dashboard/StatsCards";
 import { FiBookOpen, FiCheckCircle, FiEdit2, FiHeart, FiMessageSquare, FiBookmark } from "react-icons/fi";
+
 const DashboardHome = () => {
     const dispatch = useDispatch();
     const { loading, stats, error } = useSelector((state) => state.dashboard);
@@ -21,15 +22,14 @@ const DashboardHome = () => {
     ];
 
     return (
-        <div className="space-y-6 text-left font-sans">
-            <div>
-                <h2 className="text-2xl font-bold text-slate-800 tracking-tight">Overview</h2>
-                <p className="text-sm text-slate-400 mt-1">
+        <div className="space-y-6 text-left font-sans w-full">
+            <div className="px-1 sm:px-0">
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight">Overview</h2>
+                <p className="text-xs sm:text-sm text-slate-400 mt-1 leading-relaxed">
                     Here is a breakdown of your content metrics and engagement data.
                 </p>
             </div>
 
-            {/* Stats Components Grid Wrapper */}
             <StatsCards
                 cardsConfig={cardsConfig}
                 loading={loading}
