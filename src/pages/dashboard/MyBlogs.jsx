@@ -1,10 +1,10 @@
 import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getMyBlogs, deleteBlog } from "../../features/dashboard/userDashboardSlice";
+import { getMyBlogs, deleteBlog, updateBlogStatus } from "../../features/dashboard/userDashboardSlice";
 import { Link } from "react-router-dom";
 import { FiEye, FiHeart, FiMessageSquare, FiEdit2, FiTrash2, FiFileText, FiPlus } from "react-icons/fi";
 import toast from "react-hot-toast";
-import ConfirmationModal from "../../components/common/ConfirmationModal"; // Adjust path if needed
+import ConfirmationModal from "../../components/common/ConfirmationModal";
 
 const MyBlogs = () => {
     const dispatch = useDispatch();
@@ -13,7 +13,9 @@ const MyBlogs = () => {
 
     const [modalConfig, setModalConfig] = useState({
         isOpen: false,
+        type: null,
         blogId: null,
+        statusToUpdate: "",
         title: "",
         confirmText: "",
         variant: "danger"
@@ -23,27 +25,45 @@ const MyBlogs = () => {
         dispatch(getMyBlogs());
     }, [dispatch]);
 
-    // Setup Modal configurations on click
     const openDeleteModal = (blogId) => {
         setModalConfig({
             isOpen: true,
+            type: "delete",
             blogId,
+            statusToUpdate: "",
             title: "Are you sure you want to delete this blog post permanently?",
             confirmText: "Yes, delete it",
             variant: "danger"
         });
     };
 
-    // Execute deletion slice task upon modal confirmation
+    const openStatusModal = (blogId, currentStatus) => {
+        const nextStatus = currentStatus === "published" ? "draft" : "published";
+        setModalConfig({
+            isOpen: true,
+            type: "status",
+            blogId,
+            statusToUpdate: nextStatus,
+            title: `Are you sure you want to change this post's status to "${nextStatus}"?`,
+            confirmText: `Yes, make it a ${nextStatus}`,
+            variant: nextStatus === "published" ? "primary" : "danger"
+        });
+    };
+
     const handleModalConfirm = async () => {
-        const { blogId } = modalConfig;
+        const { type, blogId, statusToUpdate } = modalConfig;
         if (!blogId) return;
 
         try {
-            await dispatch(deleteBlog(blogId)).unwrap();
-            toast.success("Blog deleted successfully");
+            if (type === "delete") {
+                await dispatch(deleteBlog(blogId)).unwrap();
+                toast.success("Blog deleted successfully");
+            } else if (type === "status") {
+                await dispatch(updateBlogStatus({ blogId, status: statusToUpdate })).unwrap();
+                toast.success(`Blog status updated to ${statusToUpdate}`);
+            }
         } catch (err) {
-            toast.error(`Failed to delete blog: ${err?.message || "Something went wrong"}`);
+            toast.error(`Action failed: ${err || "Something went wrong"}`);
         }
 
         closeModal();
@@ -125,7 +145,7 @@ const MyBlogs = () => {
                         <thead>
                             <tr className="bg-slate-50/70 border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                                 <th className="py-3.5 px-6">Article</th>
-                                <th className="py-3.5 px-4">Status</th>
+                                <th className="py-3.5 px-4">Status Change Button</th>
                                 <th className="py-3.5 px-4 text-center">Analytics</th>
                                 <th className="py-3.5 px-6 text-right">Actions</th>
                             </tr>
@@ -139,7 +159,7 @@ const MyBlogs = () => {
                                             <div className="w-10 h-10 bg-slate-100 rounded-lg shrink-0"></div>
                                             <div className="h-4 bg-slate-100 rounded w-2/3"></div>
                                         </td>
-                                        <td className="py-4 px-4"><div className="h-4 bg-slate-100 rounded w-12"></div></td>
+                                        <td className="py-4 px-4"><div className="h-6 bg-slate-100 rounded w-20"></div></td>
                                         <td className="py-4 px-4"><div className="h-4 bg-slate-100 rounded w-20 mx-auto"></div></td>
                                         <td className="py-4 px-6"><div className="h-4 bg-slate-100 rounded w-12 ml-auto"></div></td>
                                     </tr>
@@ -163,13 +183,17 @@ const MyBlogs = () => {
                                             </div>
                                         </td>
 
-                                        <td className="py-3.5 px-4 capitalize whitespace-nowrap">
-                                            <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold border ${blog.status === "published"
-                                                ? "bg-emerald-50 border-emerald-100 text-emerald-600"
-                                                : "bg-amber-50 border-amber-100 text-amber-600"
-                                                }`}>
-                                                {blog.status || "draft"}
-                                            </span>
+                                        <td className="py-3.5 px-4 whitespace-nowrap">
+                                            <button
+                                                onClick={() => openStatusModal(blog._id, blog.status)}
+                                                className={`px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wide uppercase transition-all shadow-2xs border cursor-pointer ${blog.status === "published"
+                                                    ? "bg-emerald-50 hover:bg-emerald-100 border-emerald-200 text-emerald-700 hover:text-emerald-800"
+                                                    : "bg-amber-50 hover:bg-amber-100 border-amber-200 text-amber-700 hover:text-amber-800"
+                                                    }`}
+                                                title={blog.status === "published" ? "Click to set back to draft" : "Click to publish this blog"}
+                                            >
+                                                {blog.status === "published" ? "Published" : "Draft"}
+                                            </button>
                                         </td>
 
                                         <td className="py-3.5 px-4 whitespace-nowrap">
@@ -245,15 +269,20 @@ const MyBlogs = () => {
                                         }}
                                     />
                                     <div className="flex-1 min-w-0">
-                                        <h4 className="font-semibold text-slate-700 text-sm line-clamp-2 hover:text-violet-600 mb-1">
+                                        <h4 className="font-semibold text-slate-700 text-sm line-clamp-2 hover:text-violet-600 mb-2">
                                             <a href={`/blog/${blog.slug}`}>{blog.title}</a>
                                         </h4>
-                                        <span className={`inline-block px-2 py-0.5 rounded-md text-[9px] font-bold border uppercase tracking-wider ${blog.status === "published"
-                                            ? "bg-emerald-50 border-emerald-100 text-emerald-600"
-                                            : "bg-amber-50 border-amber-100 text-amber-600"
-                                            }`}>
+
+                                        {/* Mobile Button Toggle */}
+                                        <button
+                                            onClick={() => openStatusModal(blog._id, blog.status)}
+                                            className={`px-2 py-0.5 rounded-md text-[9px] font-bold border uppercase tracking-wider transition-all cursor-pointer ${blog.status === "published"
+                                                ? "bg-emerald-50 border-emerald-100 text-emerald-600"
+                                                : "bg-amber-50 border-amber-100 text-amber-600"
+                                                }`}
+                                        >
                                             {blog.status || "draft"}
-                                        </span>
+                                        </button>
                                     </div>
                                 </div>
 

@@ -1,12 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchComments, deleteComment } from "../../features/dashboard/adminDashboardSlice";
-import { FiTrash2, FiMessageSquare, FiCalendar, FiExternalLink } from "react-icons/fi";
+import { FiTrash2, FiMessageSquare, FiCalendar, FiChevronDown, FiChevronUp } from "react-icons/fi";
 import toast from "react-hot-toast";
 import ConfirmationModal from "../../components/common/ConfirmationModal";
+
 const Comments = () => {
     const dispatch = useDispatch();
     const { comments, commentLoding, error } = useSelector((state) => state.adminDashBoard);
+
+    // State to track which grouped user blocks are expanded
+    const [expandedUsers, setExpandedUsers] = useState({});
 
     // Modal State Management
     const [modalConfig, setModalConfig] = useState({
@@ -21,18 +25,49 @@ const Comments = () => {
         dispatch(fetchComments());
     }, [dispatch]);
 
-    // Open confirmation modal instead of window.confirm
+    // Grouping logic: Consolidates comments left by the same user ID
+    const groupedComments = useMemo(() => {
+        if (!comments || comments.length === 0) return [];
+
+        const groups = {};
+        comments.forEach((comment) => {
+            const userId = comment.user?._id || "anonymous_user";
+
+            if (!groups[userId]) {
+                groups[userId] = {
+                    user: comment.user,
+                    latestDate: comment.createdAt,
+                    list: []
+                };
+            }
+
+            groups[userId].list.push({
+                _id: comment._id,
+                content: comment.content,
+                createdAt: comment.createdAt,
+                blog: comment.blog || comment.postId
+            });
+
+            if (new Date(comment.createdAt) > new Date(groups[userId].latestDate)) {
+                groups[userId].latestDate = comment.createdAt;
+            }
+        });
+
+        return Object.values(groups).sort(
+            (a, b) => new Date(b.latestDate) - new Date(a.latestDate)
+        );
+    }, [comments]);
+
     const openDeleteModal = (commentId) => {
         setModalConfig({
             isOpen: true,
             commentId,
             title: "Are you sure you want to delete this comment permanently?",
             confirmText: "Yes, delete it",
-            variant: "danger" // Triggers the red delete/danger styling
+            variant: "danger"
         });
     };
 
-    // Execute the actual dispatch logic upon confirmation
     const handleModalConfirm = async () => {
         const { commentId } = modalConfig;
         if (!commentId) return;
@@ -51,10 +86,16 @@ const Comments = () => {
         setModalConfig((prev) => ({ ...prev, isOpen: false }));
     };
 
+    const toggleExpand = (userId) => {
+        setExpandedUsers((prev) => ({
+            ...prev,
+            [userId]: !prev[userId]
+        }));
+    };
+
     const formatDate = (dateString) => {
         if (!dateString) return "N/A";
-        const date = new Date(dateString);
-        return date.toLocaleDateString("en-US", {
+        return new Date(dateString).toLocaleDateString("en-US", {
             year: "numeric",
             month: "short",
             day: "numeric",
@@ -74,123 +115,136 @@ const Comments = () => {
             <div className="flex items-center justify-between">
                 <div className="space-y-1">
                     <h2 className="text-xl sm:text-2xl font-bold text-slate-800 tracking-tight">User Comments</h2>
-                    <p className="text-xs sm:text-sm text-slate-400">Review, moderate, and delete interactions across articles.</p>
+                    <p className="text-xs sm:text-sm text-slate-400">Review, moderate, and manage consolidated interactions across articles.</p>
                 </div>
             </div>
 
-            <div className="w-full bg-white border border-slate-200/60 rounded-2xl overflow-hidden shadow-sm">
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse block md:table">
-                        <thead className="hidden md:table-header-group">
-                            <tr className="bg-slate-50/70 border-b border-slate-100 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                                <th className="py-4 px-6">User</th>
-                                <th className="py-4 px-4">Comment</th>
-                                <th className="py-4 px-4">On Post</th>
-                                <th className="py-4 px-4 text-center">Date</th>
-                                <th className="py-4 px-6 text-right">Actions</th>
-                            </tr>
-                        </thead>
+            <div className="space-y-4">
+                {commentLoding ? (
+                    Array.from({ length: 2 }).map((_, idx) => (
+                        <div key={idx} className="flex gap-4 p-5 bg-white border border-slate-200/60 rounded-2xl animate-pulse shadow-xs">
+                            <div className="w-9 h-9 bg-slate-100 rounded-full shrink-0"></div>
+                            <div className="flex-1 space-y-2">
+                                <div className="h-4 bg-slate-100 rounded w-1/4"></div>
+                                <div className="h-3 bg-slate-50 rounded w-1/2"></div>
+                                <div className="h-10 bg-slate-100 rounded w-full mt-2"></div>
+                            </div>
+                        </div>
+                    ))
+                ) : groupedComments.length > 0 ? (
+                    groupedComments.map((group) => {
+                        const userId = group.user?._id || "anonymous_user";
+                        const hasMultiple = group.list.length > 1;
+                        const isExpanded = !!expandedUsers[userId];
 
-                        <tbody className="divide-y divide-slate-100 text-sm block md:table-row-group">
-                            {commentLoding ? (
-                                Array.from({ length: 3 }).map((_, idx) => (
-                                    <tr key={idx} className="animate-pulse flex flex-col md:table-row p-4 border-b md:border-b-0 gap-3 md:gap-0">
-                                        <td className="py-2 md:py-4 px-2 md:px-6 flex items-center gap-3">
-                                            <div className="w-8 h-8 bg-slate-100 rounded-full shrink-0"></div>
-                                            <div className="h-4 bg-slate-100 rounded w-20"></div>
-                                        </td>
-                                        <td className="py-1 md:py-4 px-2 md:px-4"><div className="h-4 bg-slate-100 rounded w-48"></div></td>
-                                        <td className="py-1 md:py-4 px-2 md:px-4"><div className="h-4 bg-slate-100 rounded w-32"></div></td>
-                                        <td className="py-1 md:py-4 px-2 md:px-4"><div className="h-4 bg-slate-100 rounded w-16 mx-auto"></div></td>
-                                        <td className="py-2 md:py-4 px-2 md:px-6"><div className="h-4 bg-slate-100 rounded w-6 ml-auto"></div></td>
-                                    </tr>
-                                ))
-                            ) : comments && comments.length > 0 ? (
-                                comments.map((comment) => (
-                                    <tr
-                                        key={comment._id}
-                                        className="hover:bg-slate-50/40 transition-colors flex flex-col md:table-row p-4 sm:p-5 md:p-0 border-b md:border-b-0 space-y-3.5 md:space-y-0 text-xs text-slate-600 font-medium"
-                                    >
-                                        {/* User Column */}
-                                        <td className="p-0 md:py-4 md:px-6 whitespace-nowrap md:table-cell">
-                                            <div className="flex items-center gap-2.5">
-                                                <img
-                                                    src={comment.user?.avtar?.url || comment.user?.avatar?.url || ""}
-                                                    alt=""
-                                                    className="w-8 h-8 object-cover rounded-full bg-slate-100 border border-slate-100 shrink-0 shadow-sm"
-                                                    onError={(e) => {
-                                                        e.target.src = `https://api.dicebear.com/7.x/initials/svg?seed=${comment.user?.name || 'User'}`;
-                                                    }}
-                                                />
-                                                <span className="font-bold text-slate-700 capitalize text-sm md:text-xs">
-                                                    {comment.user?.name || "Anonymous"}
-                                                </span>
-                                            </div>
-                                        </td>
-
-                                        {/* Comment Column */}
-                                        <td className="p-0 md:py-4 md:px-4 max-w-xs md:max-w-sm lg:max-w-md md:table-cell flex flex-col gap-1 md:block">
-                                            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider md:hidden">Comment</span>
-                                            <p
-                                                className="text-slate-600 font-normal truncate line-clamp-1 break-all text-xs sm:text-sm md:text-xs"
-                                                title={comment.content}
-                                            >
-                                                {comment.content}
+                        return (
+                            <div
+                                key={userId}
+                                className="bg-white border border-slate-200/60 rounded-2xl p-4 sm:p-5 shadow-xs hover:shadow-md transition-all duration-300"
+                            >
+                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                                    <div className="flex items-center gap-3">
+                                        <img
+                                            src={group.user?.avtar?.url || group.user?.avatar?.url || ""}
+                                            alt=""
+                                            className="w-9 h-9 object-cover rounded-full bg-slate-100 border border-slate-100 shrink-0 shadow-xs"
+                                            onError={(e) => {
+                                                e.target.src = `https://api.dicebear.com/7.x/initials/svg?seed=${group.user?.name || 'User'}`;
+                                            }}
+                                        />
+                                        <div>
+                                            <h4 className="font-bold text-slate-800 capitalize text-sm">
+                                                {group.user?.name || "Anonymous User"}
+                                            </h4>
+                                            <p className="text-[11px] text-slate-400 font-medium">
+                                                Total submitted interactions: <span className="font-bold text-violet-600">{group.list.length}</span>
                                             </p>
-                                        </td>
-
-                                        {/* Post Anchor Link */}
-                                        <td className="p-0 md:py-4 md:px-4 max-w-40 md:max-w-55 md:table-cell flex justify-between items-center text-xs md:text-sm">
-                                            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider md:hidden">On Post</span>
-                                            <div className="flex items-center gap-1.5 text-slate-500 font-normal min-w-0">
-                                                <span className="truncate capitalize" title={comment.blog?.title || comment.postId?.title}>
-                                                    {comment.blog?.title || comment.postId?.title || "View Post"}
-                                                </span>
-                                                <FiExternalLink size={11} className="text-slate-300 shrink-0" />
-                                            </div>
-                                        </td>
-
-                                        {/* Created At Timestamp */}
-                                        <td className="p-0 md:py-4 md:px-4 md:text-center whitespace-nowrap md:table-cell flex justify-between items-center">
-                                            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider md:hidden">Date</span>
-                                            <div className="flex items-center justify-center gap-1 text-slate-400 font-normal">
-                                                <FiCalendar size={11} className="text-slate-300" />
-                                                <span>{formatDate(comment.createdAt)}</span>
-                                            </div>
-                                        </td>
-
-                                        {/* Interactive Tool Actions */}
-                                        <td className="p-0 pt-2 md:pt-0 md:py-4 md:px-6 whitespace-nowrap md:table-cell border-t border-dashed border-slate-100 md:border-t-0 text-right">
-                                            <div className="flex items-center justify-between md:justify-end gap-4 py-1 md:py-0">
-                                                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider md:hidden">Actions</span>
-                                                <button
-                                                    onClick={() => openDeleteModal(comment._id)}
-                                                    className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all duration-200"
-                                                    title="Delete Comment"
-                                                >
-                                                    <FiTrash2 size={14} />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))
-                            ) : (
-                                <tr className="block md:table-row">
-                                    <td colSpan="5" className="py-14 text-center text-slate-400 font-medium bg-slate-50/10 block md:table-cell">
-                                        <div className="flex flex-col items-center justify-center space-y-2 mx-auto">
-                                            <FiMessageSquare size={18} className="text-slate-300" />
-                                            <p className="text-sm font-semibold text-slate-500">No comments found</p>
-                                            <p className="text-xs text-slate-400">There are no user comment tracking updates at the moment.</p>
                                         </div>
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                                    </div>
+
+                                    {hasMultiple && (
+                                        <button
+                                            onClick={() => toggleExpand(userId)}
+                                            className="flex items-center gap-1.5 text-xs font-semibold text-violet-600 hover:text-violet-700 transition-colors cursor-pointer bg-violet-50 px-3 py-1.5 rounded-xl border border-violet-100 self-start sm:self-auto"
+                                        >
+                                            <span>{isExpanded ? "Hide Comments" : `Show All (${group.list.length})`}</span>
+                                            {isExpanded ? <FiChevronUp size={14} /> : <FiChevronDown size={14} />}
+                                        </button>
+                                    )}
+                                </div>
+
+                                {!hasMultiple ? (
+                                    <div className="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/60 border border-slate-100/80 rounded-xl p-3.5 text-xs">
+                                        <div className="space-y-1.5 flex-1 min-w-0">
+                                            <div className="flex flex-wrap items-center gap-2 text-[10px] font-semibold text-slate-400">
+                                                <span className="flex items-center gap-1"><FiCalendar /> {formatDate(group.list[0].createdAt)}</span>
+                                                <span className="text-slate-200">•</span>
+                                                <span className="flex items-center gap-1 max-w-xs truncate">
+                                                    On: <span className="text-slate-500 font-bold underline capitalize">{group.list[0].blog?.title || "View Post"}</span>
+                                                </span>
+                                            </div>
+                                            <p className="text-slate-600 font-medium italic wrap-break-word">
+                                                "{group.list[0].content}"
+                                            </p>
+                                        </div>
+
+                                        <button
+                                            onClick={() => openDeleteModal(group.list[0]._id)}
+                                            className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-xl transition-all self-end sm:self-auto"
+                                            title="Delete Comment"
+                                        >
+                                            <FiTrash2 size={14} />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    isExpanded && (
+                                        <div className="mt-3 pt-3 space-y-3 border-t border-dashed border-slate-100 animate-fadeIn">
+                                            {group.list.map((comment) => (
+                                                <div
+                                                    key={comment._id}
+                                                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/40 border border-slate-100/70 hover:bg-slate-50/80 rounded-xl p-3 text-xs transition-colors"
+                                                >
+                                                    <div className="space-y-1 flex-1 min-w-0">
+                                                        <div className="flex flex-wrap items-center gap-2 text-[10px] font-semibold text-slate-400">
+                                                            <span className="flex items-center gap-1"><FiCalendar /> {formatDate(comment.createdAt)}</span>
+                                                            <span className="text-slate-200">•</span>
+                                                            <span className="flex items-center gap-1 max-w-sm truncate">
+                                                                On Post: <span className="text-slate-500 font-bold underline capitalize">{comment.blog?.title || "View Post"}</span>
+                                                            </span>
+                                                        </div>
+                                                        <p className="text-slate-600 font-medium italic wrap-break-word">
+                                                            "{comment.content}"
+                                                        </p>
+                                                    </div>
+
+                                                    <button
+                                                        onClick={() => openDeleteModal(comment._id)}
+                                                        className="p-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all self-end sm:self-auto"
+                                                        title="Delete Comment"
+                                                    >
+                                                        <FiTrash2 size={13} />
+                                                    </button>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )
+                                )}
+                            </div>
+                        );
+                    })
+                ) : (
+                    <div className="w-full py-16 bg-white border border-slate-200/60 rounded-2xl text-center shadow-sm flex flex-col items-center justify-center p-6">
+                        <div className="w-12 h-12 rounded-full bg-slate-50 flex items-center justify-center border border-slate-100 text-slate-300 mb-3.5">
+                            <FiMessageSquare size={20} />
+                        </div>
+                        <h3 className="font-bold text-slate-700 text-base">No Comments Found</h3>
+                        <p className="text-xs text-slate-400 max-w-xs mt-1">
+                            There are currently no active comments pending across the environment platform database logs.
+                        </p>
+                    </div>
+                )}
             </div>
 
-            {/* Custom UI Portal Modal */}
             <ConfirmationModal
                 isOpen={modalConfig.isOpen}
                 onClose={closeModal}

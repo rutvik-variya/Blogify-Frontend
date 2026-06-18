@@ -17,12 +17,10 @@ export const getDashboardStats = createAsyncThunk(
 
 export const getRecentBlogs = createAsyncThunk(
     "dashboard/getRecentBlogs",
-
     async (_, thunkAPI) => {
         try {
             const res = await axiosInstance.get("dashboard/recent-blogs");
             return res.data.result;
-
         } catch (error) {
             return thunkAPI.rejectWithValue(
                 error.response?.data?.message
@@ -33,11 +31,10 @@ export const getRecentBlogs = createAsyncThunk(
 
 export const getBookmarkBlogs = createAsyncThunk(
     "dashboard/getBookmarkBlogs",
-
     async (_, thunkAPI) => {
         try {
             const res = await axiosInstance.get("dashboard/bookmark-blogs");
-            return res.data.result
+            return res.data.result;
         } catch (error) {
             return thunkAPI.rejectWithValue(
                 error.response?.data?.message ||
@@ -49,11 +46,10 @@ export const getBookmarkBlogs = createAsyncThunk(
 
 export const getRecentActivity = createAsyncThunk(
     "dashboard/getRecentActivity",
-
     async (_, thunkAPI) => {
         try {
             const res = await axiosInstance.get("dashboard/activity");
-            return res.data.result
+            return res.data.result;
         } catch (error) {
             return thunkAPI.rejectWithValue(
                 error.response?.data?.message ||
@@ -83,7 +79,6 @@ export const getMyBlogs = createAsyncThunk(
 
 export const deleteBlog = createAsyncThunk(
     "dashboard/deleteBlog",
-
     async (blogId, thunkAPI) => {
         try {
             const res = await axiosInstance.delete(`/blog/${blogId}`);
@@ -100,7 +95,6 @@ export const deleteBlog = createAsyncThunk(
     }
 );
 
-
 export const editBlog = createAsyncThunk(
     "dashboard/editBlog",
     async ({ blogId, formData }, thunkAPI) => {
@@ -111,7 +105,7 @@ export const editBlog = createAsyncThunk(
                         "Content-Type": "multipart/form-data",
                     },
                 }
-            )
+            );
             return res.data.blog;
         } catch (error) {
             return thunkAPI.rejectWithValue(
@@ -119,13 +113,26 @@ export const editBlog = createAsyncThunk(
                 "Failed to edit blog"
             );
         }
-
     }
-)
+);
+
+// Connected directly to: PATCH /api/blog/:id/status
+export const updateBlogStatus = createAsyncThunk(
+    "dashboard/updateBlogStatus",
+    async ({ blogId, status }, thunkAPI) => {
+        try {
+            const res = await axiosInstance.patch(`/blog/${blogId}/status`, { status });
+            return res.data.blog;
+        } catch (error) {
+            return thunkAPI.rejectWithValue(
+                error.response?.data?.message || "Failed to update blog status"
+            );
+        }
+    }
+);
 
 const initialState = {
     stats: null,
-
     recentBlogs: [],
     bookmarkBlogs: [],
     recentActivity: [],
@@ -137,6 +144,7 @@ const initialState = {
     recentActivityLoading: false,
     myBlogsLoading: false,
     deleteLoading: false,
+    statusUpdateLoading: false,
 
     error: null,
 };
@@ -156,12 +164,10 @@ const dashboardSlice = createSlice({
                 state.loading = true;
                 state.error = null;
             })
-
             .addCase(getDashboardStats.fulfilled, (state, action) => {
                 state.loading = false;
                 state.stats = action.payload.result;
             })
-
             .addCase(getDashboardStats.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
@@ -171,12 +177,10 @@ const dashboardSlice = createSlice({
             .addCase(getRecentBlogs.pending, (state) => {
                 state.recentLoading = true;
             })
-
             .addCase(getRecentBlogs.fulfilled, (state, action) => {
                 state.recentLoading = false;
                 state.recentBlogs = action.payload;
             })
-
             .addCase(getRecentBlogs.rejected, (state, action) => {
                 state.recentLoading = false;
                 state.error = action.payload;
@@ -186,12 +190,10 @@ const dashboardSlice = createSlice({
             .addCase(getBookmarkBlogs.pending, (state) => {
                 state.bookmarkLoading = true;
             })
-
             .addCase(getBookmarkBlogs.fulfilled, (state, action) => {
                 state.bookmarkLoading = false;
                 state.bookmarkBlogs = action.payload;
             })
-
             .addCase(getBookmarkBlogs.rejected, (state, action) => {
                 state.bookmarkLoading = false;
                 state.error = action.payload;
@@ -201,48 +203,38 @@ const dashboardSlice = createSlice({
             .addCase(getRecentActivity.pending, (state) => {
                 state.recentActivityLoading = true;
             })
-
             .addCase(getRecentActivity.fulfilled, (state, action) => {
                 state.recentActivityLoading = false;
                 state.recentActivity = action.payload;
             })
-
             .addCase(getRecentActivity.rejected, (state, action) => {
                 state.recentActivityLoading = false;
                 state.error = action.payload;
             })
 
-
             // get my blog
-
             .addCase(getMyBlogs.pending, (state) => {
                 state.myBlogsLoading = true;
             })
-
             .addCase(getMyBlogs.fulfilled, (state, action) => {
                 state.myBlogsLoading = false;
                 state.myBlogs = action.payload;
             })
-
             .addCase(getMyBlogs.rejected, (state, action) => {
                 state.myBlogsLoading = false;
                 state.error = action.payload;
             })
 
             // delete blog
-
             .addCase(deleteBlog.pending, (state) => {
                 state.deleteLoading = true;
             })
-
             .addCase(deleteBlog.fulfilled, (state, action) => {
                 state.deleteLoading = false;
-
                 state.myBlogs = state.myBlogs.filter(
                     (blog) => blog._id !== action.payload.blogId
                 );
             })
-
             .addCase(deleteBlog.rejected, (state, action) => {
                 state.deleteLoading = false;
                 state.error = action.payload;
@@ -252,22 +244,33 @@ const dashboardSlice = createSlice({
             .addCase(editBlog.pending, (state) => {
                 state.loading = true;
             })
-
             .addCase(editBlog.fulfilled, (state, action) => {
                 state.loading = false;
-
                 state.myBlogs = state.myBlogs.map((blog) =>
                     blog._id === action.payload._id ? action.payload : blog
                 );
             })
-
             .addCase(editBlog.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             })
+
+            // Update Status lifecycle
+            .addCase(updateBlogStatus.pending, (state) => {
+                state.statusUpdateLoading = true;
+            })
+            .addCase(updateBlogStatus.fulfilled, (state, action) => {
+                state.statusUpdateLoading = false;
+                state.myBlogs = state.myBlogs.map((blog) =>
+                    blog._id === action.payload._id ? action.payload : blog
+                );
+            })
+            .addCase(updateBlogStatus.rejected, (state, action) => {
+                state.statusUpdateLoading = false;
+                state.error = action.payload;
+            });
     },
 });
 
 export const { clearError } = dashboardSlice.actions;
-
 export default dashboardSlice.reducer;
