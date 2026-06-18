@@ -115,6 +115,7 @@ const RegisterPage = () => {
                                         ? "Creating ..."
                                         : "Create an account"
                                 }
+                                className="w-full py-3 text-base"
                             />
 
                             {error && (

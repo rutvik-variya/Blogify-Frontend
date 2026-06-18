@@ -112,6 +112,7 @@ const LoginPage = () => {
                                         ? "Loading..."
                                         : "Sign In"
                                 }
+                                className="w-full py-3 text-base"
                             />
 
                             {error && (

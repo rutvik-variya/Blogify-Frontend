@@ -10,6 +10,7 @@ import TextAreaField from "../common/TextAreaField";
 import FileUpload from "../common/FileUpload";
 import Button from "../common/Button";
 
+import { draftBlogSchema } from "../../features/blog/draftBlogSchema";
 import { blogSchema } from "../../features/blog/blogSchema";
 import { editBlogSchema } from "../../features/blog/editBlogSchema";
 import { getCateories } from "../../features/category/categorySlice";
@@ -36,15 +37,15 @@ const BlogForm = ({ mode, blog = null }) => {
     const {
         register,
         control,
-        handleSubmit,
         reset,
+        trigger,
+        getValues,
         formState: { errors },
     } = useForm({
         resolver: zodResolver(schema),
         defaultValues: {
             title: blog?.title || "",
             category: blog?.category?._id || "",
-            status: blog?.status || "draft",
             content: blog?.content || "",
             featuredImage: null,
         },
@@ -54,36 +55,77 @@ const BlogForm = ({ mode, blog = null }) => {
 
     const [preview, setPreview] = useState(blog?.featuredImage?.url || null);
 
-    const onSubmit = async (data) => {
+    const submitBlog = async (data, status) => {
         const formData = new FormData();
 
         formData.append("title", data.title);
-        formData.append("category", data.category);
-        formData.append("status", data.status);
-        formData.append("content", data.content);
+        formData.append("category", data.category || "");
+        formData.append("status", status);
+        formData.append("content", data.content || "");
 
         if (data.featuredImage) {
             formData.append("featuredImage", data.featuredImage);
         }
 
-        let result = (mode === "create") ? await dispatch(createBlog(formData)) : await dispatch(editBlog({ blogId: blog._id, formData }));
-
-        if (createBlog.fulfilled.match(result) || editBlog.fulfilled.match(result)) {
-            toast.success(
-                mode === "create"
-                    ? "Blog created successfully"
-                    : "Blog updated successfully"
+        let result =
+            mode === "create" ? await dispatch(createBlog(formData)) : await dispatch(
+                editBlog({
+                    blogId: blog._id,
+                    formData,
+                })
             );
+
+        if (
+            createBlog.fulfilled.match(result) ||
+            editBlog.fulfilled.match(result)
+        ) {
+            toast.success(
+                status === "published"
+                    ? "Blog published successfully"
+                    : "Draft saved successfully"
+            );
+
             reset();
             setPreview(null);
-            navigate("/dashboard/blogs")
+
+            navigate("/dashboard/blogs");
         } else {
-            toast.error(result.payload || "Failed to create blog");
+            toast.error(result.payload || "Something went wrong");
         }
     };
 
+    const handlePublish = async () => {
+        const isValid = await trigger();
+
+        console.log("isValid", isValid)
+        console.log(errors);
+        console.log(getValues());
+
+
+        if (!isValid) return;
+
+        const data = getValues();
+
+        submitBlog(data, "published");
+    };
+
+    const handleDraft = async () => {
+        const data = getValues();
+
+        const result = draftBlogSchema.safeParse({
+            title: data.title,
+        });
+
+        if (!result.success) {
+            toast.error("Title is required");
+            return;
+        }
+
+        submitBlog(data, "draft");
+    };
+
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form className="space-y-6">
             <InputField
                 label="Blog Title"
                 type="text"
@@ -92,28 +134,12 @@ const BlogForm = ({ mode, blog = null }) => {
                 error={errors.title}
             />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
                 <SelectField
                     label="Category"
                     {...register("category")}
                     error={errors.category}
                     options={categoryList}
-                />
-
-                <SelectField
-                    label="Publication Status"
-                    {...register("status")}
-                    error={errors.status}
-                    options={[
-                        {
-                            _id: "draft",
-                            name: "Save as Draft",
-                        },
-                        {
-                            _id: "published",
-                            name: "Publish Immediately",
-                        },
-                    ]}
                 />
             </div>
 
@@ -164,20 +190,22 @@ const BlogForm = ({ mode, blog = null }) => {
                 )}
             </div>
 
-            <div className="pt-4 border-t border-slate-100 dark:border-slate-700">
-                <Button
-                    type="submit"
-                    disabled={loading}
-                    value={
-                        loading
-                            ? mode === "create"
-                                ? "Creating..."
-                                : "Updating..."
-                            : mode === "create"
-                                ? "Create Post"
-                                : "Update Post"
-                    }
-                />
+            <div className="pt-4 border-t border-slate-100 dark:border-slate-700 flex flex-col sm:flex-row justify-between gap-4">
+                <div className="pt-4 border-t border-slate-100 dark:border-slate-700 flex items-center justify-start gap-3">
+                    <Button
+                        variant="solid"
+                        value={loading ? "Publishing..." : "Publish"}
+                        onClick={handlePublish}
+                        disabled={loading}
+                    />
+
+                    <Button
+                        variant="ghost"
+                        value={loading ? "Saving..." : "Save Draft"}
+                        onClick={handleDraft}
+                        disabled={loading}
+                    />
+                </div>
             </div>
 
             {error && (

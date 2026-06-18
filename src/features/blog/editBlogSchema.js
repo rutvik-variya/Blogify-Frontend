@@ -3,9 +3,7 @@ import { z } from "zod";
 export const editBlogSchema = z.object({
     title: z.string().min(5).max(100),
     category: z.string().min(1),
-    status: z.enum(["draft", "published"]),
     content: z.string().min(50),
-
     featuredImage: z
         .instanceof(File)
         .optional()

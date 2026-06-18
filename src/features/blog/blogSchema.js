@@ -9,9 +9,6 @@ export const blogSchema = z.object({
     category: z
         .string({ required_error: "Please select a category" })
         .min(1, "Please select a category"),
-
-    status: z.enum(["draft", "published"]),
-
     content: z
         .string({ required_error: "Content is required" })
         .min(50, "Content must be at least 50 characters"),
