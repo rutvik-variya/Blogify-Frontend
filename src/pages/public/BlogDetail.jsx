@@ -9,6 +9,8 @@ import LikeButton from "../../components/blog/LikeButton";
 import SaveButton from "../../components/blog/SaveButton";
 import CommentSection from "../../components/comment/CommentSection";
 
+import BlogContent from "../../components/blog/BlogContent";
+
 const BlogDetail = () => {
 
     const { slug } = useParams();
@@ -112,9 +114,8 @@ const BlogDetail = () => {
                 </div>
 
             </div>
-            <div className="prose prose-indigo prose-lg max-w-none text-gray-700 leading-relaxed whitespace-pre-line">
-                {content}
-            </div>
+                
+            <BlogContent content={content} />
 
             {/* comment section */}
 

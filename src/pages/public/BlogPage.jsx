@@ -14,7 +14,7 @@ import LikeButton from "../../components/blog/LikeButton";
 import SaveButton from "../../components/blog/SaveButton";
 import { useLocation } from "react-router-dom";
 
-
+import { stripHtml } from "../../utils/stripHtml";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 const BlogPage = () => {
@@ -164,7 +164,7 @@ const BlogPage = () => {
                                     </h3>
 
                                     <p className="text-slate-500 text-sm line-clamp-3 leading-relaxed font-normal">
-                                        {blog.content}
+                                        {blog.excerpt || stripHtml(blog.content)}
                                     </p>
                                 </div>
 

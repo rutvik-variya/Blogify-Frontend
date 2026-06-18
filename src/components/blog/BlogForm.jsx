@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import InputField from "../common/InputField";
 import SelectField from "../common/SelectField";
-import TextAreaField from "../common/TextAreaField";
+import RichTextEditor from "../editor/RichTextEditor";
 import FileUpload from "../common/FileUpload";
 import Button from "../common/Button";
 
@@ -143,12 +143,17 @@ const BlogForm = ({ mode, blog = null }) => {
                 />
             </div>
 
-            <TextAreaField
-                label="Content"
-                row={12}
-                placeholder="Unleash your creativity here..."
-                {...register("content")}
-                error={errors.content}
+            <Controller
+                name="content"
+                control={control}
+                render={({ field }) => (
+                    <RichTextEditor
+                        label="Content"
+                        value={field.value}
+                        onChange={field.onChange}
+                        error={errors.content}
+                    />
+                )}
             />
 
             <div className="space-y-4">
