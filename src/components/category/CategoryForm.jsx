@@ -9,7 +9,7 @@ import InputField from "../common/InputField";
 import Button from "../common/Button";
 
 import { categorySchema } from "./CategorySchema";
-import { addCategory, editCategory } from "../../sfeatures/dashboard/adminDashboardSlice";
+import { addCategory, editCategory } from "../../features/dashboard/adminDashboardSlice";
 
 const CategoryForm = ({ mode, category = null }) => {
     const dispatch = useDispatch();
