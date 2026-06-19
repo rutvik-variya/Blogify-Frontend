@@ -8,8 +8,8 @@ import { useNavigate } from "react-router-dom";
 import InputField from "../common/InputField";
 import Button from "../common/Button";
 
-import { categorySchema } from "./categorySchema.js";
-import { addCategory, editCategory } from "../../features/dashboard/adminDashboardSlice";
+import { categorySchema } from "./CategorySchema";
+import { addCategory, editCategory } from "../../sfeatures/dashboard/adminDashboardSlice";
 
 const CategoryForm = ({ mode, category = null }) => {
     const dispatch = useDispatch();
